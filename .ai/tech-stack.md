@@ -35,7 +35,9 @@
   - Benefits: PostgreSQL database, real-time subscriptions, generous free tier
   - Services used:
     - PostgreSQL database for inventory storage
+    - Supabase Auth for user authentication and access control
     - Supabase JS client for CRUD operations
+    - Row Level Security (RLS) for user data isolation
     - Auto-generated REST API
   - Alternative considered: Firebase (prefer SQL over NoSQL for structured data)
 
@@ -56,10 +58,12 @@
   - Upgrade path: Switch to GPT-4 if quality insufficient
 
 ### Authentication
-- **HTTP Basic Authentication**
-  - Why: Simple, built-in browser support, adequate for single-user
-  - Implementation: Astro middleware
-  - Upgrade path: Supabase Auth when multi-user needed
+- **Supabase Auth**
+  - Why: Secure, scalable authentication with built-in user management
+  - Benefits: Email/password authentication, session management, user isolation
+  - Implementation: Supabase Auth client with login/registration screens
+  - Features: User registration, login, logout, password reset (optional for MVP)
+  - Access Control: Row Level Security (RLS) policies ensure users only see their own data
 
 ### Deployment & Hosting
 - **Node.js Adapter**
@@ -91,6 +95,10 @@
 │   │   │   ├── input.tsx
 │   │   │   ├── dialog.tsx
 │   │   │   └── table.tsx
+│   │   ├── auth/
+│   │   │   ├── login-form.tsx        # Login screen
+│   │   │   ├── register-form.tsx     # Registration screen
+│   │   │   └── logout-button.tsx     # Logout functionality
 │   │   ├── inventory/
 │   │   │   ├── product-form.tsx      # Add/Edit product form
 │   │   │   ├── product-list.tsx      # Inventory table
@@ -113,7 +121,7 @@
 │   │   └── ...
 │   │
 │   ├── middleware/                   # Astro middleware
-│   │   └── index.ts                  # HTTP Basic Auth
+│   │   └── index.ts                  # Authentication & route protection
 │   │
 │   ├── types.ts                      # Shared types
 │   │
@@ -132,10 +140,60 @@
 
 ## Data Models
 
+### Database Schema
+
+#### Products Table
+```sql
+CREATE TABLE products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  quantity NUMERIC NOT NULL,
+  unit TEXT NOT NULL,
+  expiration_date DATE NOT NULL,
+  category TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+
+-- Policy: Users can only see their own products
+CREATE POLICY "Users can view own products"
+  ON products FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- Policy: Users can insert their own products
+CREATE POLICY "Users can insert own products"
+  ON products FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Policy: Users can update their own products
+CREATE POLICY "Users can update own products"
+  ON products FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- Policy: Users can delete their own products
+CREATE POLICY "Users can delete own products"
+  ON products FOR DELETE
+  USING (auth.uid() = user_id);
+```
+
+### User (Supabase Auth)
+```typescript
+interface User {
+  id: string;                 // UUID (from Supabase Auth)
+  email: string;              // User email
+  created_at: string;         // Account creation timestamp
+}
+```
+
 ### Product (Supabase table: `products`)
 ```typescript
 interface Product {
   id: string;                 // UUID (auto-generated)
+  user_id: string;            // UUID (foreign key to auth.users)
   name: string;               // Product name
   quantity: number;           // Numeric quantity
   unit: string;               // kg, g, ml, L, pieces
@@ -206,16 +264,12 @@ interface ShoppingList {
 # .env.local (not committed to git)
 
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxx...  # Public, safe for client
+PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=eyJxxx...  # Public, safe for client
 SUPABASE_SERVICE_ROLE_KEY=eyJxxx...      # Secret, only for server
 
 # OpenRouter
 OPENROUTER_API_KEY=sk-or-xxx...          # Secret, only for server
-
-# Basic Auth
-BASIC_AUTH_USERNAME=family               # Your chosen username
-BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 ```
 
 ## Development Workflow
@@ -223,11 +277,12 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 ### Initial Setup
 1. Create Astro project: `npm create astro@latest meal-planner`
 2. Add React integration: `npx astro add react`
-3. Install dependencies: `npm install @supabase/supabase-js`
-4. Set up Supabase project and get credentials
-5. Configure environment variables
-6. Initialize Shadcn/ui: `npx shadcn-ui@latest init`
-7. Add Node adapter: `npx astro add node`
+3. Install dependencies: `npm install @supabase/supabase-js @supabase/auth-helpers-astro`
+4. Set up Supabase project and enable Auth
+5. Create products table with user_id column and Row Level Security (RLS)
+6. Configure environment variables
+7. Initialize Shadcn/ui: `npx shadcn-ui@latest init`
+8. Add Node adapter: `npx astro add node`
 
 ### Development
 1. Run dev server: `npm run dev`
@@ -250,15 +305,19 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 - ✅ Environment variables encrypted at rest by deployment platform
 
 ### Authentication
-- HTTP Basic Auth via Astro middleware
-- Credentials stored in environment variables
-- Browser handles credential storage/caching
-- Applies to all routes (pages + API)
+- Supabase Auth for user authentication
+- Email/password authentication with secure password hashing
+- JWT tokens stored in HTTP-only cookies or localStorage (configurable)
+- Session management handled by Supabase Auth
+- Protected routes require valid authentication
+- Login and registration screens for user access control
 
 ### Database Access
 - Supabase anon key is public (safe for client-side)
-- No Row Level Security needed (single-user)
-- Service role key only used if needed server-side
+- Row Level Security (RLS) policies enforce user data isolation
+- Each user can only access their own products (user_id foreign key)
+- Service role key only used if needed server-side (admin operations)
+- RLS policies automatically filter queries by authenticated user
 
 ### HTTPS
 - Enforced by deployment platform (free SSL certificates)
@@ -291,17 +350,18 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 ## Scalability Considerations
 
 ### Current Limits
-- Single-user by design
-- ~1000 products (Supabase free tier: 500MB)
-- ~100 meal plan generations/month before costs rise
+- Multi-user support with Supabase Auth
+- ~1000 products per user (Supabase free tier: 500MB total)
+- ~100 meal plan generations/month per user before costs rise
+- 50,000 monthly active users (Supabase free tier limit)
 
 ### Future Scaling Path
-1. Add Supabase Auth for multi-user
-2. Implement Row Level Security (RLS)
-3. Add user_id foreign key to products table
-4. Upgrade to Supabase Pro if needed
-5. Cache meal plans in database to reduce API costs
-6. Add Redis for session/cache management
+1. Upgrade to Supabase Pro if user count exceeds free tier
+2. Implement email verification for enhanced security
+3. Add social login (Google, GitHub, etc.)
+4. Cache meal plans in database to reduce API costs
+5. Add Redis for session/cache management
+6. Implement rate limiting per user
 
 ## Development Tasks
 
@@ -309,9 +369,13 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 - [ ] Create Astro project
 - [ ] Install and configure Tailwind CSS 4
 - [ ] Set up Shadcn/ui
-- [ ] Create Supabase project and products table
+- [ ] Create Supabase project and enable Auth
+- [ ] Create products table with user_id column
+- [ ] Set up Row Level Security (RLS) policies
 - [ ] Configure environment variables
-- [ ] Implement HTTP Basic Auth middleware
+- [ ] Implement Supabase Auth integration
+- [ ] Create login and registration screens
+- [ ] Set up authentication middleware
 - [ ] Set up Node.js adapter
 - [ ] Configure deployment
 
@@ -373,10 +437,16 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 - [ ] Test retry after API failure
 
 ### Authentication Testing
-- [ ] Access without credentials (should prompt)
-- [ ] Enter wrong credentials (should re-prompt)
-- [ ] Enter correct credentials (should access app)
-- [ ] Verify session persists across pages
+- [ ] Register new user account with valid email/password
+- [ ] Register with invalid email (should show error)
+- [ ] Register with weak password (should show error)
+- [ ] Register with existing email (should show error)
+- [ ] Login with correct credentials (should access app)
+- [ ] Login with incorrect credentials (should show error)
+- [ ] Access protected routes without login (should redirect to login)
+- [ ] Verify session persists across pages and browser refresh
+- [ ] Logout functionality (should clear session and redirect)
+- [ ] Verify user data isolation (user A cannot see user B's inventory)
 
 ## Common Pitfalls to Avoid
 
@@ -397,14 +467,3 @@ BASIC_AUTH_PASSWORD=your-secure-password # Your chosen password
 - Shadcn/ui Components: https://ui.shadcn.com
 - Tailwind CSS: https://tailwindcss.com/docs
 - Astro Deployment: https://docs.astro.build/en/guides/deploy/
-
-## Decision Log
-
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01-27 | Use Astro 5 | Content-focused framework with excellent performance, React integration |
-| 2026-01-27 | Use React 19 | Latest stable version with improved performance |
-| 2026-01-27 | Use Tailwind CSS 4 | Latest version with improved performance and features |
-| 2026-01-27 | Use GPT-3.5-turbo instead of GPT-4 | 10x cheaper, test if sufficient before upgrading |
-| 2026-01-27 | Add HTTP Basic Auth | Simple security, adequate for single-user |
-| 2026-01-27 | Use Node.js adapter | Enables server-side rendering with flexible deployment options |
