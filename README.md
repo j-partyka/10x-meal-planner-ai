@@ -1,94 +1,225 @@
-# 10x Astro Starter
+# 10x Meal Planner
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+A web-based meal planning application that helps families optimize meal preparation by leveraging existing kitchen inventory, reducing food waste, and minimizing unnecessary grocery expenses through AI-powered weekly meal planning.
+
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Getting Started Locally](#getting-started-locally)
+- [Available Scripts](#available-scripts)
+- [Project Scope](#project-scope)
+- [Project Status](#project-status)
+- [License](#license)
+
+## Project Description
+
+10x Meal Planner is an MVP (Minimum Viable Product) designed to solve common meal planning challenges faced by families. The application helps users:
+
+- **Reduce meal-related expenses** by prioritizing existing kitchen inventory
+- **Minimize food waste** through better visibility and planning of expiring items
+- **Organize kitchen inventory** with an easy-to-use tracking system
+- **Generate weekly meal plans** using AI that considers available inventory, expiration dates, and nutritional needs
+- **Create shopping lists** automatically for only the missing ingredients
+
+The application is designed for families with young children who want to prepare healthy, home-cooked meals efficiently while managing their kitchen inventory and grocery expenses.
+
+### Key Features
+
+- **Inventory Management**: Full CRUD operations for tracking kitchen products with expiration dates
+- **AI-Powered Meal Planning**: Weekly meal plans generated using OpenAI GPT-3.5-turbo via OpenRouter.ai
+- **Smart Prioritization**: Automatically prioritizes items expiring soon to reduce waste
+- **Shopping List Generation**: Creates organized shopping lists for missing ingredients only
+- **Nutritional Considerations**: Meal plans account for adult and toddler nutritional needs
+- **Time-Efficient Recipes**: Meal suggestions respect preparation time constraints (10-30 minutes)
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+### Frontend Framework
+- **Astro 5** - Content-focused web framework with server-side rendering
+- **React 19** - UI library for interactive components
+- **TypeScript 5** - Type-safe JavaScript
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Shadcn/ui** - Accessible, customizable UI components built on Radix UI
 
-## Prerequisites
+### Backend & Database
+- **Supabase** - Backend-as-a-Service with PostgreSQL database
+- **Astro API Endpoints** - Server-side endpoints for secure API integrations
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+### AI Integration
+- **OpenRouter.ai** - Unified API for multiple AI models
+- **OpenAI GPT-3.5-turbo** - AI model for meal plan generation (~$0.40-1.60/month for typical usage)
 
-## Getting Started
+### Authentication
+- **HTTP Basic Authentication** - Simple authentication for single-user MVP
 
-1. Clone the repository:
+### Deployment
+- **Node.js Adapter** - Enables server-side rendering with Astro
+- Compatible with Vercel, Netlify, Railway, Render, and other Node.js hosting platforms
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+## Getting Started Locally
 
-2. Install dependencies:
+### Prerequisites
 
-```bash
-npm install
-```
+- **Node.js v22.14.0** (as specified in `.nvmrc`)
+- **npm** (comes with Node.js)
+- **Supabase account** (free tier available)
+- **OpenRouter.ai account** with API key
 
-3. Run the development server:
+### Installation Steps
 
-```bash
-npm run dev
-```
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd 10x-meal-planner-ai
+   ```
 
-4. Build for production:
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run build
-```
+3. **Set up environment variables:**
+   
+   Create a `.env.local` file in the root directory based on `.env.example`:
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in the required values:
+   ```bash
+   # Supabase
+   SUPABASE_URL=https://xxxxx.supabase.co
+   SUPABASE_KEY=eyJxxx...  # Supabase anon key
+   
+   # OpenRouter
+   OPENROUTER_API_KEY=sk-or-xxx...
+   
+   # Basic Auth (optional, for production)
+   BASIC_AUTH_USERNAME=family
+   BASIC_AUTH_PASSWORD=your-secure-password
+   ```
+
+4. **Set up Supabase:**
+   - Create a new Supabase project at [supabase.com](https://supabase.com)
+   - Create a `products` table with the following schema:
+     ```sql
+     CREATE TABLE products (
+       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+       name TEXT NOT NULL,
+       quantity NUMERIC NOT NULL,
+       unit TEXT NOT NULL,
+       expiration_date DATE NOT NULL,
+       category TEXT,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+     );
+     ```
+   - Copy your Supabase URL and anon key to `.env.local`
+
+5. **Set up OpenRouter.ai:**
+   - Create an account at [openrouter.ai](https://openrouter.ai)
+   - Generate an API key
+   - Set financial limits to control costs
+   - Add the API key to `.env.local`
+
+6. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+7. **Access the application:**
+   - Open your browser and navigate to `http://localhost:4321`
+   - If Basic Auth is configured, enter your credentials when prompted
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server with hot reload
 - `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint to check for code issues
+- `npm run lint:fix` - Automatically fix ESLint issues
+- `npm run format` - Format code using Prettier
+- `npm run astro` - Run Astro CLI commands
 
-## Project Structure
+## Project Scope
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+### In Scope (MVP)
 
-## AI Development Support
+**Phase 0: Setup**
+- HTTP Basic Authentication for application access
+- Astro 5 project setup with TypeScript
+- Supabase database configuration
+- Deployment configuration
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+**Phase 1: Inventory Management**
+- Product CRUD operations (create, read, update, delete)
+- Inventory list display with search functionality
+- Manual product entry
+- Expiration date indicators (visual warnings for items expiring soon)
+- Basic data validation
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+**Phase 2: Meal Planning & Shopping**
+- AI-powered weekly meal plan generation (7 days, 3 meals per day)
+- Shopping list with quantities grouped by category
+- Leftover utilization suggestions
+- Expiration date priority logic
+- Meal plan regeneration
 
-### Cursor IDE
+### Out of Scope (MVP)
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+- Individual user accounts with signup/login
+- Multi-user support
+- CSV import/export for bulk inventory management
+- Barcode scanning
+- Cost tracking per product
+- Expense management features
+- Multi-week or long-term meal planning
+- Historical meal plan storage
+- Recipe customization
+- Mobile application (responsive design only)
+- Imperial unit system support
+- Multiple language support
 
-### GitHub Copilot
+## Project Status
 
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
+**Current Status:** MVP in Development
 
-### Windsurf
+This is a Minimum Viable Product (MVP) focused on core functionality:
 
-The `.windsurfrules` file contains AI configuration for Windsurf.
+- ✅ Project setup and configuration
+- 🔄 Inventory management features (in progress)
+- 🔄 AI meal planning integration (in progress)
+- ⏳ Shopping list generation (planned)
+- ⏳ Deployment and testing (planned)
 
-## Contributing
+### Success Metrics
 
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+The MVP will be considered successful if:
+1. All user stories pass acceptance criteria
+2. Application is deployed and accessible via web browser
+3. Family achieves measurable expense reduction (target: 50%)
+4. Application is used consistently
+5. Technical performance metrics are met (page load < 2s, meal plan generation < 30s)
+6. AI meal plan generation costs remain under $2/month
+
+### Estimated Operating Costs
+
+- **Supabase:** $0 (free tier: 500MB database, 50K MAU)
+- **OpenRouter (GPT-3.5-turbo):** $0.40-1.60/month (2 generations/week)
+- **Hosting:** $0 (free tier available on most platforms)
+- **Total:** ~$0.50-2.00/month
 
 ## License
 
 MIT
+
+---
+
+## Additional Resources
+
+- [Astro Documentation](https://docs.astro.build)
+- [Supabase Documentation](https://supabase.com/docs)
+- [OpenRouter API Documentation](https://openrouter.ai/docs)
+- [Shadcn/ui Components](https://ui.shadcn.com)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
