@@ -6,7 +6,7 @@ import { generateMealPlanCommandSchema } from '../../../lib/schemas';
 import { generateMealPlan } from '../../../lib/services/meal-plan.service';
 import { MealPlanAiError } from '../../../lib/services/meal-plan.errors';
 import { listProducts } from '../../../lib/services/product.service';
-import type { MealPlanProductInput } from '../../../types';
+import type { MealPlanProductInput, ProductDto } from '../../../types';
 
 export const prerender = false;
 
@@ -25,15 +25,13 @@ function resolveStartDate(startDate?: string): string {
 /**
  * Maps ProductDto to MealPlanProductInput (name, quantity, unit, expiration_date, category).
  */
-function toMealPlanProductInput(
-  row: { name: string; quantity: number; unit: string; expiration_date: string; category: string | null }
-): MealPlanProductInput {
+function toMealPlanProductInput(row: ProductDto): MealPlanProductInput {
   return {
     name: row.name,
     quantity: row.quantity,
     unit: row.unit,
     expiration_date: row.expiration_date,
-    category: row.category ?? undefined,
+    category: row.category,
   };
 }
 
@@ -66,7 +64,10 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
   let products: MealPlanProductInput[];
   if (parsed.data.products !== undefined && parsed.data.products.length > 0) {
-    products = parsed.data.products;
+    products = parsed.data.products.map((p) => ({
+      ...p,
+      category: p.category ?? null,
+    }));
   } else if (parsed.data.products !== undefined && parsed.data.products.length === 0) {
     return errorResponse('Add products to inventory first', 422);
   } else {

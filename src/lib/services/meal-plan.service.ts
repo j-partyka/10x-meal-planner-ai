@@ -5,6 +5,7 @@ import type {
   GenerateMealPlanResponse,
 } from '../../types';
 import {
+  MealPlanAiError,
   MealPlanTimeoutError,
   MealPlanRateLimitError,
   MealPlanProviderError,
