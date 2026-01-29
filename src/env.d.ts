@@ -1,12 +1,15 @@
 /// <reference types="astro/client" />
 
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from './db/supabase.client';
 import type { Database } from './db/database.types';
 
 declare global {
   namespace App {
     interface Locals {
+      /** Supabase client (authenticated on protected API routes). Typed with app Database. */
       supabase: SupabaseClient<Database>;
+      /** Set only on protected API routes after successful auth. */
+      userId?: string;
     }
   }
 }
