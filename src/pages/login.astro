@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { AuthFormContainer } from "../components/auth/AuthFormContainer";
+import { isAllowedRedirect } from "../types";
+
+const redirectParam = Astro.url.searchParams.get("redirect");
+const redirect = redirectParam && isAllowedRedirect(redirectParam) ? redirectParam : undefined;
+---
+
+<Layout title="Sign in – 10x Meal Planner">
+  <main class="flex min-h-full flex-col items-center justify-center px-4 py-12" role="main">
+    <AuthFormContainer client:load redirect={redirect} />
+  </main>
+</Layout>

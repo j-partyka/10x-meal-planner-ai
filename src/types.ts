@@ -11,6 +11,24 @@ import type {
 } from "./db/database.types";
 
 // =============================================================================
+// Auth (login / register view)
+// =============================================================================
+
+/** Which form is active on the login page. */
+export type AuthMode = "signin" | "register";
+
+/** Allowed redirect targets after successful auth. */
+export const AUTH_REDIRECT_ROUTES = ["/", "/meal-plan", "/shopping-list"] as const;
+
+export type AuthRedirectRoute = (typeof AUTH_REDIRECT_ROUTES)[number];
+
+/** Returns true if path is an allowed redirect target. */
+export function isAllowedRedirect(path: string | null | undefined): path is AuthRedirectRoute {
+  if (path == null || path === "") return false;
+  return (AUTH_REDIRECT_ROUTES as readonly string[]).includes(path);
+}
+
+// =============================================================================
 // Entity types (from database)
 // =============================================================================
 
