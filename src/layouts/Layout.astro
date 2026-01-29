@@ -1,11 +1,13 @@
 ---
 import "../styles/global.css";
+import { AppNav } from "../components/AppNav";
+import { ToasterMount } from "../components/ToasterMount";
 
 interface Props {
   title?: string;
 }
 
-const { title = "10x Astro Starter" } = Astro.props;
+const { title = "10x Meal Planner" } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +20,9 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    <AppNav client:load />
     <slot />
+    <ToasterMount client:load />
   </body>
 </html>
 

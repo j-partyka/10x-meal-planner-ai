@@ -1,8 +1,8 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import { InventoryView } from "../components/inventory/InventoryView";
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Inventory – 10x Meal Planner">
+  <InventoryView client:load />
 </Layout>
