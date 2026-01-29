@@ -1,10 +1,10 @@
 /**
  * Supabase client for browser (client-side) use.
- * Uses PUBLIC_ env vars so they are available in client bundles.
- * Use this in React components and client-side code (e.g. login page auth).
+ * Uses PUBLIC_ env vars and @supabase/ssr so session is stored in cookies
+ * and middleware can read it for protected route redirects.
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
 import type { Database } from "./database.types";
 
@@ -17,4 +17,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-export const supabaseBrowser = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabaseBrowser = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey);

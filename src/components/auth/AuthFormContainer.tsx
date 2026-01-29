@@ -22,6 +22,7 @@ interface AuthFormContainerProps {
   redirect?: string;
 }
 
+/** After successful sign in/sign up: navigate to validated redirect or /. */
 function getRedirectTarget(redirect: string | undefined): string {
   return redirect && isAllowedRedirect(redirect) ? redirect : "/";
 }

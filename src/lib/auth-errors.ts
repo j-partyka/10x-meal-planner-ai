@@ -9,8 +9,11 @@ const WEAK_PASSWORD_MESSAGE = "Password should be at least 8 characters.";
 const GENERIC_MESSAGE = "Something went wrong. Please try again.";
 
 /** Map sign-in (signInWithPassword) errors to a single user message. */
-export function mapSignInError(_error: unknown): string {
+export function mapSignInError(error: unknown): string {
   // Supabase may return AuthApiError with message/code; we never expose details.
+  if (import.meta.env.DEV && error != null) {
+    console.debug("[auth] sign-in error (not exposed to user):", error);
+  }
   return SIGN_IN_MESSAGE;
 }
 
@@ -43,5 +46,8 @@ export function mapSignUpError(error: unknown): string {
     return WEAK_PASSWORD_MESSAGE;
   }
 
+  if (import.meta.env.DEV) {
+    console.debug("[auth] sign-up error (not exposed to user):", error);
+  }
   return GENERIC_MESSAGE;
 }
