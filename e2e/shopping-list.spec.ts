@@ -9,6 +9,7 @@ test.describe("Shopping list — no plan, list after generate", () => {
   test.beforeEach(async ({ page }) => {
     const creds = getE2ECredentials();
     test.skip(!creds, "E2E_USERNAME and E2E_PASSWORD must be set in .env.test");
+    if (!creds) return;
 
     const loginPage = new LoginPage(page);
     await loginPage.goto();
