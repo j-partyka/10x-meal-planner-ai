@@ -20,15 +20,25 @@ export class MealPlanTimeoutError extends MealPlanAiError {
 }
 
 export class MealPlanRateLimitError extends MealPlanAiError {
-  constructor() {
-    super('Too many requests. Please try again later.', 429);
+  /** Suggested wait time in seconds (from Retry-After or provider body). */
+  public readonly retryAfter?: number;
+
+  constructor(
+    message: string = 'The AI provider is rate-limiting requests. Free tier has strict limits. Please wait and try again.',
+    retryAfter?: number
+  ) {
+    super(message, 429);
     this.name = 'MealPlanRateLimitError';
+    this.retryAfter = retryAfter;
   }
 }
 
 export class MealPlanProviderError extends MealPlanAiError {
-  constructor(statusCode: 502 | 503) {
-    super('Meal plan service is temporarily unavailable. Please try again.', statusCode);
+  constructor(
+    statusCode: 502 | 503,
+    message: string = 'Meal plan service is temporarily unavailable. Please try again.'
+  ) {
+    super(message, statusCode);
     this.name = 'MealPlanProviderError';
   }
 }

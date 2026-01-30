@@ -29,6 +29,7 @@ export function ShoppingListView() {
       });
 
       if (res.status === 401) {
+        setLoading(false);
         return;
       }
 

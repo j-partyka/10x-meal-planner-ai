@@ -49,6 +49,7 @@ The application is designed for families with young children who want to prepare
 ### AI Integration
 - **OpenRouter.ai** - Unified API for multiple AI models
 - **OpenAI GPT-3.5-turbo** - AI model for meal plan generation (~$0.40-1.60/month for typical usage)
+- The OpenRouter service (`src/lib/services/openrouter.service.ts`) is **server-only**; it is used from API routes and domain services. Set `OPENROUTER_API_KEY` in your environment. Structured output uses `response_format` with `type: 'json_schema'` and `strict: true`.
 
 ### Authentication
 - **HTTP Basic Authentication** - Simple authentication for single-user MVP
@@ -128,6 +129,13 @@ The application is designed for families with young children who want to prepare
    npm run dev
    ```
 
+   **If you get 503 (e.g. meal plan generation) or env changes don't apply:** clean caches and restart:
+   ```bash
+   npm run clean
+   npm run dev
+   ```
+   This removes `dist`, `.astro`, and Vite cache so the server picks up fresh code and env from `.env.local`.
+
 7. **Access the application:**
    - Open your browser and navigate to `http://localhost:4321`
    - If Basic Auth is configured, enter your credentials when prompted
@@ -137,6 +145,7 @@ The application is designed for families with young children who want to prepare
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build locally
+- `npm run clean` - Remove `dist`, `.astro`, and Vite cache (run before restart if env or code changes don't apply)
 - `npm run lint` - Run ESLint to check for code issues
 - `npm run lint:fix` - Automatically fix ESLint issues
 - `npm run format` - Format code using Prettier

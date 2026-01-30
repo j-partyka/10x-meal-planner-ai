@@ -183,6 +183,8 @@ export interface GenerateMealPlanCommand {
 export interface GenerateMealPlanResponse {
   mealPlan: MealPlanDto;
   shoppingList: ShoppingListDto;
+  /** Prompt sent to the LLM (for display only). */
+  prompt: string;
 }
 
 // =============================================================================

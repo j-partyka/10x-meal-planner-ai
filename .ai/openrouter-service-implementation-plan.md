@@ -249,6 +249,14 @@ const responseFormat = {
 
 ---
 
+## Documentation (OpenRouter service)
+
+- **Environment:** Set `OPENROUTER_API_KEY` in your server environment (e.g. `.env`) for AI features. The service throws on first use if the key is missing.
+- **Server-only:** The OpenRouter service is used only from Astro API routes or other server code. Never import it in client-side components or expose the API key to the client.
+- **Structured output:** For JSON output (e.g. meal plans), use `response_format` with `type: 'json_schema'`, `json_schema.strict: true`, and a JSON schema object. The model returns raw JSON without markdown code blocks.
+
+---
+
 ## Appendix: OpenRouter API Elements (Concise Reference)
 
 | Element | Implementation |

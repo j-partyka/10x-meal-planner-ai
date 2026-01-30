@@ -16,6 +16,17 @@ export function AppNav() {
     window.location.href = LOGIN_PATH;
   }, []);
 
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (e.button !== 0 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+        return;
+      }
+      e.preventDefault();
+      window.location.href = href;
+    },
+    []
+  );
+
   return (
     <nav
       className="flex items-center gap-4 border-b border-border bg-background px-4 py-3"
@@ -27,6 +38,7 @@ export function AppNav() {
             key={href}
             href={href}
             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+            onClick={(e) => handleNavClick(e, href)}
           >
             {label}
           </a>

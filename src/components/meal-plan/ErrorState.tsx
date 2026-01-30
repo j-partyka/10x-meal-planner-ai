@@ -5,6 +5,8 @@ export type MealPlanErrorKind = "retry" | "rate_limit";
 export interface MealPlanErrorState {
   kind: MealPlanErrorKind;
   message: string;
+  /** Optional hint from API (e.g. for 503 config). */
+  hint?: string;
 }
 
 export interface ErrorStateProps {
@@ -27,6 +29,9 @@ export function ErrorState({
       aria-live="assertive"
     >
       <p className="text-sm">{error.message}</p>
+      {error.hint != null && error.hint !== "" && (
+        <p className="mt-1 text-xs text-muted-foreground">{error.hint}</p>
+      )}
       <Button
         type="button"
         variant="outline"

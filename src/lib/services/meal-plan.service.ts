@@ -10,12 +10,19 @@ import {
   MealPlanRateLimitError,
   MealPlanProviderError,
 } from './meal-plan.errors';
+import type { OpenRouterResponseFormat } from './openrouter.types';
+import type { OpenRouterService } from './openrouter.service';
+import {
+  OpenRouterConfigError,
+  OpenRouterAuthError,
+  OpenRouterClientError,
+  OpenRouterRateLimitError,
+  OpenRouterTimeoutError,
+  OpenRouterServerError,
+  OpenRouterParseError,
+} from './openrouter.errors';
 import { computeShoppingList } from './shopping-list.service';
 import type { InventoryItemForList } from './shopping-list.service';
-
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const AI_TIMEOUT_MS = 60_000;
-const DEFAULT_MODEL = 'openai/gpt-4o-mini';
 
 /**
  * Family profile (MVP): hardcoded in API per plan.
@@ -41,7 +48,15 @@ function expirationPriority(expirationDate: string, today: string): string {
 
 /**
  * Builds the AI prompt with inventory (expiration priority) and family profile.
+ * Exported so the API can return the exact prompt that will be sent to the LLM.
  */
+export function getMealPlanPrompt(
+  products: MealPlanProductInput[],
+  startDate: string
+): string {
+  return buildPrompt(products, startDate);
+}
+
 function buildPrompt(products: MealPlanProductInput[], startDate: string): string {
   const today = startDate;
   const inventoryLines = products.map((p) => {
@@ -140,61 +155,113 @@ function parseMealPlanResponse(json: unknown): MealPlanDto {
   return { days: normalized };
 }
 
-/**
- * Calls OpenRouter chat completions with timeout. Throws MealPlanAiError on timeout/rate limit/provider errors.
- */
-async function callOpenRouter(prompt: string): Promise<string> {
-  const apiKey = import.meta.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new MealPlanProviderError(503);
-  }
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
-
-  try {
-    const res = await fetch(OPENROUTER_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+const mealSchema = {
+  type: 'object' as const,
+  properties: {
+    name: { type: 'string' as const },
+    ingredients: {
+      type: 'array' as const,
+      items: {
+        type: 'object' as const,
+        properties: {
+          name: { type: 'string' as const },
+          quantity: { type: 'number' as const },
+          unit: { type: 'string' as const },
+        },
+        required: ['name', 'quantity', 'unit'] as const,
       },
-      body: JSON.stringify({
-        model: DEFAULT_MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 4096,
-        temperature: 0.5,
-      }),
-      signal: controller.signal,
+    },
+    instructions: { type: 'array' as const, items: { type: 'string' as const } },
+  },
+  required: ['name', 'ingredients', 'instructions'] as const,
+};
+
+/** Meal plan JSON schema for structured output (response_format). */
+const MEAL_PLAN_RESPONSE_FORMAT: OpenRouterResponseFormat = {
+  type: 'json_schema',
+  json_schema: {
+    name: 'meal_plan',
+    strict: true,
+    schema: {
+      type: 'object',
+      properties: {
+        days: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              date: { type: 'string', description: 'YYYY-MM-DD' },
+              breakfast: mealSchema,
+              lunch: mealSchema,
+              dinner: mealSchema,
+            },
+            required: ['date', 'breakfast', 'lunch', 'dinner'],
+          },
+        },
+      },
+      required: ['days'],
+      additionalProperties: false,
+    },
+  },
+};
+
+/** Duck-check for OpenRouter-style errors (handles cross-bundle instanceof). */
+function isOpenRouterError(err: unknown): err is { message: string; statusCode?: number; retryAfter?: number } {
+  return err instanceof Error && 'message' in err && typeof (err as { message?: unknown }).message === 'string';
+}
+
+/**
+ * Maps OpenRouter errors to MealPlanAiError so API routes stay unchanged.
+ * Uses duck-typing for statusCode so we preserve provider message even if instanceof fails (e.g. multiple bundles).
+ */
+function mapOpenRouterErrorToMealPlan(err: unknown): never {
+  if (err instanceof MealPlanAiError) {
+    throw err;
+  }
+  if (err instanceof OpenRouterTimeoutError) {
+    throw new MealPlanTimeoutError();
+  }
+  if (err instanceof OpenRouterRateLimitError) {
+    throw new MealPlanRateLimitError(err.message, err.retryAfter);
+  }
+  if (
+    err instanceof OpenRouterConfigError ||
+    err instanceof OpenRouterAuthError ||
+    err instanceof OpenRouterClientError ||
+    err instanceof OpenRouterServerError ||
+    err instanceof OpenRouterParseError
+  ) {
+    const status = err.statusCode === 502 ? 502 : 503;
+    throw new MealPlanProviderError(status as 502 | 503, err.message);
+  }
+  if (isOpenRouterError(err) && err.statusCode != null) {
+    const status = err.statusCode === 502 ? 502 : 503;
+    throw new MealPlanProviderError(status as 502 | 503, err.message);
+  }
+  const message = err instanceof Error ? err.message : 'Meal plan service is temporarily unavailable. Please try again.';
+  throw new MealPlanProviderError(503, message);
+}
+
+/**
+ * Calls OpenRouter via the provided service. Throws MealPlanAiError on timeout/rate limit/provider errors.
+ */
+async function callOpenRouter(
+  prompt: string,
+  openRouter: OpenRouterService
+): Promise<string> {
+  try {
+    const result = await openRouter.chat({
+      messages: [
+        { role: 'system', content: 'You are a meal planner. Output only valid JSON matching the requested schema.' },
+        { role: 'user', content: prompt },
+      ],
+      maxTokens: 4096,
+      temperature: 0.5,
+      responseFormat: MEAL_PLAN_RESPONSE_FORMAT,
     });
-
-    clearTimeout(timeoutId);
-
-    if (res.status === 429) {
-      throw new MealPlanRateLimitError();
-    }
-    if (res.status === 502 || res.status === 503) {
-      throw new MealPlanProviderError(res.status as 502 | 503);
-    }
-    if (!res.ok) {
-      throw new MealPlanProviderError(503);
-    }
-
-    const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    const content = data?.choices?.[0]?.message?.content;
-    if (typeof content !== 'string') {
-      throw new MealPlanProviderError(503);
-    }
-    return content;
+    return result.content;
   } catch (err) {
-    clearTimeout(timeoutId);
-    if (err instanceof MealPlanAiError) {
-      throw err;
-    }
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new MealPlanTimeoutError();
-    }
-    throw new MealPlanProviderError(503);
+    mapOpenRouterErrorToMealPlan(err);
   }
 }
 
@@ -212,17 +279,19 @@ function toInventoryForList(products: MealPlanProductInput[]): InventoryItemForL
 
 /**
  * Generates a 7-day meal plan using AI and computes the shopping list from meal plan and inventory.
+ * openRouter: created per-request in the API route so the API key is read at request time.
  * Throws MealPlanTimeoutError (504), MealPlanRateLimitError (429), MealPlanProviderError (502/503).
  */
 export async function generateMealPlan(
   products: MealPlanProductInput[],
-  startDate: string
+  startDate: string,
+  openRouter: OpenRouterService
 ): Promise<GenerateMealPlanResponse> {
   const prompt = buildPrompt(products, startDate);
-  const content = await callOpenRouter(prompt);
+  const content = await callOpenRouter(prompt, openRouter);
   const json = extractJson(content);
   const mealPlan = parseMealPlanResponse(json);
   const inventory = toInventoryForList(products);
   const shoppingList = computeShoppingList(mealPlan, inventory);
-  return { mealPlan, shoppingList };
+  return { mealPlan, shoppingList, prompt };
 }
