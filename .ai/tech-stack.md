@@ -73,6 +73,23 @@
   - Cost: Varies by platform (many offer free tiers)
   - Alternative considered: Static site generation (requires API endpoints, so SSR needed)
 
+### Testing
+- **Vitest**
+  - Why: Fast unit and integration test runner with native ESM and TypeScript support
+  - Use: Unit tests for `src/lib` (Zod schemas, services, utils); integration/API tests for REST endpoints with mocked Supabase and OpenRouter
+  - Benefits: Low config, fast feedback, works well with Zod (e.g. `.safeParse()`), can drive API tests via `fetch` with Supabase Auth token
+  - Scope: Aligned with `.ai/test-plan.md` (unit targets: schemas, `meal-plan.service`, `shopping-list.service`, product service, `isAllowedRedirect`; API targets: `.ai/api-test-scenarios.md`)
+  - Run: `npm run test`
+
+- **Playwright**
+  - Why: Reliable end-to-end testing in real browsers with built-in waiting and multi-browser support
+  - Use: E2E tests for critical user journeys — authentication (login, register, logout, protected redirects), inventory CRUD, meal plan generation and regeneration, shopping list view
+  - Benefits: Runs against `npm run dev` or deployed preview; supports viewport and browser matrix (Chrome, Firefox, Safari, Edge) per PRD
+  - Scope: Smoke (auth + one happy path) and expansion to PRD user stories; see test plan Section 4 (Test scenarios)
+  - Run: `npm run test:e2e` (dev server started separately or via Playwright config)
+
+- **References:** Full test scope, scenarios, environment, and acceptance criteria: `.ai/test-plan.md`; API checklist: `.ai/api-test-scenarios.md`.
+
 ## Project Structure
 
 ```
@@ -410,9 +427,15 @@ OPENROUTER_API_KEY=sk-or-xxx...          # Secret, only for server
 - [ ] Final deployment
 - [ ] Share URL with family
 
-## Testing Strategy (Manual for MVP)
+## Testing Strategy
 
-### Inventory Testing
+Automated testing uses **Vitest** (unit and integration) and **Playwright** (E2E) as described in the Testing subsection above. The full test plan is in `.ai/test-plan.md`.
+
+### Manual testing (MVP)
+
+The following checklists complement automated tests.
+
+#### Inventory Testing
 - [ ] Add product with all fields
 - [ ] Add product with minimal fields (no category)
 - [ ] Edit product quantity
@@ -420,7 +443,7 @@ OPENROUTER_API_KEY=sk-or-xxx...          # Secret, only for server
 - [ ] Search products by name
 - [ ] Verify expiration indicators (red <3 days, yellow <7 days)
 
-### Meal Planning Testing
+#### Meal Planning Testing
 - [ ] Generate plan with 10+ products
 - [ ] Generate plan with 2-3 products (minimal inventory)
 - [ ] Verify expiring items appear in early meals
@@ -429,14 +452,14 @@ OPENROUTER_API_KEY=sk-or-xxx...          # Secret, only for server
 - [ ] Test regenerate functionality
 - [ ] Verify shopping list accuracy
 
-### Error Handling Testing
+#### Error Handling Testing
 - [ ] Submit empty product form (validation)
 - [ ] Submit negative quantity (validation)
 - [ ] Generate plan with empty inventory (disabled button)
 - [ ] Simulate API failure (disconnect internet)
 - [ ] Test retry after API failure
 
-### Authentication Testing
+#### Authentication Testing
 - [ ] Register new user account with valid email/password
 - [ ] Register with invalid email (should show error)
 - [ ] Register with weak password (should show error)

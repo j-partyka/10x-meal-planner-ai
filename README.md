@@ -8,6 +8,7 @@ A web-based meal planning application that helps families optimize meal preparat
 - [Tech Stack](#tech-stack)
 - [Getting Started Locally](#getting-started-locally)
 - [Available Scripts](#available-scripts)
+- [Testing](#testing)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
 - [License](#license)
@@ -57,6 +58,17 @@ The application is designed for families with young children who want to prepare
 ### Deployment
 - **Node.js Adapter** - Enables server-side rendering with Astro
 - Compatible with Vercel, Netlify, Railway, Render, and other Node.js hosting platforms
+
+### Testing
+- **Vitest** - Unit and integration tests
+  - Unit tests for `src/lib` (Zod schemas, services, utils) with valid/invalid inputs and mocked Supabase/OpenRouter
+  - Integration/API tests for REST endpoints using `fetch` and Supabase Auth token (see `.ai/api-test-scenarios.md`)
+  - Run with: `npm run test`
+- **Playwright** - End-to-end tests
+  - Browser-based tests for critical user journeys: authentication, inventory CRUD, meal plan generation, shopping list
+  - Run against `npm run dev` or a deployed preview
+  - Run with: `npm run test:e2e`
+- Detailed test scope, scenarios, and acceptance criteria are in `.ai/test-plan.md`
 
 ## Getting Started Locally
 
@@ -146,10 +158,28 @@ The application is designed for families with young children who want to prepare
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build locally
 - `npm run clean` - Remove `dist`, `.astro`, and Vite cache (run before restart if env or code changes don't apply)
+- `npm run test` - Run unit and integration tests (Vitest)
+- `npm run test:watch` - Run Vitest in watch mode
+- `npm run test:ui` - Run Vitest with UI mode
+- `npm run test:coverage` - Run Vitest with coverage report
+- `npm run test:e2e` - Run E2E tests (Playwright; dev server started automatically)
 - `npm run lint` - Run ESLint to check for code issues
 - `npm run lint:fix` - Automatically fix ESLint issues
 - `npm run format` - Format code using Prettier
 - `npm run astro` - Run Astro CLI commands
+
+## Testing
+
+The project uses **Vitest** for unit and integration tests and **Playwright** for end-to-end tests (see [Tech Stack > Testing](#testing) for details).
+
+- **Unit / integration:** `npm run test` — exercises schemas, services, and API routes (with mocked Supabase and OpenRouter where needed).
+- **E2E:** `npm run test:e2e` — runs Playwright against the app (dev server is started automatically by Playwright’s config).
+- **Test plan:** Scope, scenarios, and acceptance criteria are documented in [.ai/test-plan.md](.ai/test-plan.md). API checklists are in [.ai/api-test-scenarios.md](.ai/api-test-scenarios.md).
+
+**Test environment**
+
+- **Vitest:** `vitest.config.ts` (jsdom, `src/test/setup.ts` for `@testing-library/jest-dom`). Unit tests live in `src/**/*.test.ts` or `*.spec.ts`. Use `npm run test:watch` for watch mode and `npm run test:ui` for the Vitest UI.
+- **Playwright:** `playwright.config.ts` (Chromium only). E2E specs and Page Objects live in `e2e/` (e.g. `e2e/smoke.spec.ts`, `e2e/pages/LoginPage.ts`). First time: run `npx playwright install chromium` to install the browser.
 
 ## Project Scope
 

@@ -10,10 +10,14 @@
     "clean": "node scripts/clean.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "dotenv": "^16.4.5",
     "@astrojs/node": "^9.4.3",
     "@astrojs/react": "^4.3.1",
     "@astrojs/sitemap": "^3.5.1",
@@ -29,6 +33,7 @@
     "astro": "^5.13.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
     "lucide-react": "^0.487.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -41,8 +46,14 @@
   "devDependencies": {
     "@eslint/compat": "1.2.7",
     "@eslint/js": "9.23.0",
+    "@playwright/test": "^1.58.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@typescript-eslint/eslint-plugin": "8.28.0",
     "@typescript-eslint/parser": "8.28.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/ui": "^4.0.18",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-import-resolver-typescript": "4.2.5",
@@ -54,10 +65,12 @@
     "eslint-plugin-react-compiler": "19.0.0-beta-aeaed83-20250323",
     "eslint-plugin-react-hooks": "5.2.0",
     "husky": "9.1.7",
+    "jsdom": "^27.4.0",
     "lint-staged": "15.5.0",
     "prettier": "3.8.1",
     "prettier-plugin-astro": "0.14.1",
-    "typescript-eslint": "8.28.0"
+    "typescript-eslint": "8.28.0",
+    "vitest": "^4.0.18"
   },
   "lint-staged": {
     "*.{ts,tsx,astro}": [
