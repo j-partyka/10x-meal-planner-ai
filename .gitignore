@@ -18,6 +18,7 @@ pnpm-debug.log*
 .env.production
 .env.local
 .env.example
+.env.test
 
 # macOS-specific files
 .DS_Store
