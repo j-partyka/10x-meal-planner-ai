@@ -1,13 +1,10 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
-import { errorResponse, jsonResponse } from '../../../lib/api-responses';
-import { logServerError, logValidationFailure } from '../../../lib/api-logger';
-import {
-  createProductSchema,
-  listProductsQuerySchema,
-} from '../../../lib/schemas';
-import { listProducts, createProduct } from '../../../lib/services/product.service';
-import type { PaginationMeta } from '../../../types';
+import { errorResponse, jsonResponse } from "../../../lib/api-responses";
+import { logServerError, logValidationFailure } from "../../../lib/api-logger";
+import { createProductSchema, listProductsQuerySchema } from "../../../lib/schemas";
+import { listProducts, createProduct } from "../../../lib/services/product.service";
+import type { PaginationMeta } from "../../../types";
 
 export const prerender = false;
 
@@ -18,7 +15,7 @@ export const prerender = false;
 export const GET: APIRoute = async ({ locals, url }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   const raw = Object.fromEntries(url.searchParams);
@@ -28,8 +25,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
     const detailsList = Object.entries(details).flatMap(([field, messages]) =>
       (messages ?? []).map((message) => ({ field, message }))
     );
-    logValidationFailure('GET /api/products', detailsList);
-    return errorResponse('Validation failed', 400, detailsList);
+    logValidationFailure("GET /api/products", detailsList);
+    return errorResponse("Validation failed", 400, detailsList);
   }
 
   try {
@@ -39,8 +36,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
     const meta: PaginationMeta = { total, page, limit, totalPages };
     return jsonResponse({ data, meta }, 200);
   } catch (err) {
-    logServerError('GET /api/products', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("GET /api/products", err);
+    return errorResponse("Internal server error", 500);
   }
 };
 
@@ -51,14 +48,14 @@ export const GET: APIRoute = async ({ locals, url }) => {
 export const POST: APIRoute = async ({ locals, request }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return errorResponse('Invalid JSON body', 400);
+    return errorResponse("Invalid JSON body", 400);
   }
 
   const parsed = createProductSchema.safeParse(body);
@@ -67,15 +64,15 @@ export const POST: APIRoute = async ({ locals, request }) => {
     const detailsList = Object.entries(details).flatMap(([field, messages]) =>
       (messages ?? []).map((message) => ({ field, message }))
     );
-    logValidationFailure('POST /api/products', detailsList);
-    return errorResponse('Validation failed', 400, detailsList);
+    logValidationFailure("POST /api/products", detailsList);
+    return errorResponse("Validation failed", 400, detailsList);
   }
 
   try {
     const product = await createProduct(locals.supabase, userId, parsed.data);
     return jsonResponse(product, 201);
   } catch (err) {
-    logServerError('POST /api/products', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("POST /api/products", err);
+    return errorResponse("Internal server error", 500);
   }
 };

@@ -10,12 +10,7 @@ export interface DeleteProductDialogProps {
   onConfirm: (id: string) => Promise<void>;
 }
 
-export function DeleteProductDialog({
-  open,
-  product,
-  onClose,
-  onConfirm,
-}: DeleteProductDialogProps) {
+export function DeleteProductDialog({ open, product, onClose, onConfirm }: DeleteProductDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [deleting, setDeleting] = useState(false);
 

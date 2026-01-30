@@ -9,25 +9,20 @@ import { MealPlanEmptyStateWithInventory } from "./MealPlanEmptyStateWithInvento
 import { LoadingState } from "./LoadingState";
 import { ErrorState } from "./ErrorState";
 import { MealPlanTable } from "./MealPlanTable";
-import type {
-  GenerateMealPlanResponse,
-  PaginatedResponse,
-  ProductDto,
-} from "@/types";
+import type { GenerateMealPlanResponse, PaginatedResponse, ProductDto } from "@/types";
 
 const DEFAULT_RATE_LIMIT_COOLDOWN_SEC = 45;
 
-export type MealPlanError = {
+export interface MealPlanError {
   kind: "retry" | "rate_limit";
   message: string;
   /** Suggested wait time in seconds (for rate_limit). */
   retryAfterSeconds?: number;
   /** Optional hint from API (e.g. for 503 config). */
   hint?: string;
-};
+}
 
-const ERROR_RETRY_MESSAGE =
-  "Unable to generate meal plan. Please try again in a moment.";
+const ERROR_RETRY_MESSAGE = "Unable to generate meal plan. Please try again in a moment.";
 
 export function MealPlanView() {
   const { mealPlan, prompt, setMealPlanAndList, hydrate } = useMealPlanStorage();
@@ -75,10 +70,7 @@ export function MealPlanView() {
           const baseMessage =
             (data as { error?: string }).error ??
             "The AI provider is rate-limiting requests. Please wait and try again.";
-          const message =
-            retryAfter > 0
-              ? `${baseMessage} Try again in ${retryAfter} seconds.`
-              : baseMessage;
+          const message = retryAfter > 0 ? `${baseMessage} Try again in ${retryAfter} seconds.` : baseMessage;
           setError({
             kind: "rate_limit",
             message,
@@ -99,11 +91,7 @@ export function MealPlanView() {
       }
       const result = data as GenerateMealPlanResponse;
       if (result.mealPlan && result.shoppingList) {
-        setMealPlanAndList(
-          result.mealPlan,
-          result.shoppingList,
-          result.prompt
-        );
+        setMealPlanAndList(result.mealPlan, result.shoppingList, result.prompt);
       }
       setError(null);
     } catch {
@@ -114,7 +102,7 @@ export function MealPlanView() {
     } finally {
       setLoading(false);
     }
-  }, [retryCooldownUntil]);
+  }, [retryCooldownUntil, setMealPlanAndList]);
 
   useEffect(() => {
     hydrate();
@@ -122,27 +110,17 @@ export function MealPlanView() {
     void fetchPromptPreview();
   }, [hydrate, fetchProductsCheck, fetchPromptPreview]);
 
-  const isRetryDisabled =
-    error?.kind === "rate_limit" &&
-    retryCooldownUntil != null &&
-    Date.now() < retryCooldownUntil;
+  const isRetryDisabled = error?.kind === "rate_limit" && retryCooldownUntil != null && Date.now() < retryCooldownUntil;
 
   return (
-    <main
-      className="flex flex-col gap-6 px-4 py-6"
-      aria-label="Meal plan"
-      data-test-id="meal-plan-page"
-    >
+    <main className="flex flex-col gap-6 px-4 py-6" aria-label="Meal plan" data-test-id="meal-plan-page">
       <PageHeader title="Meal Plan" />
       <section
         className="flex flex-col gap-2"
         aria-label="Input sent to the AI"
         data-test-id="meal-plan-prompt-section"
       >
-        <label
-          htmlFor="meal-plan-prompt"
-          className="text-sm font-medium text-muted-foreground"
-        >
+        <label htmlFor="meal-plan-prompt" className="text-sm font-medium text-muted-foreground">
           Input sent to the AI (read-only)
         </label>
         <textarea
@@ -154,12 +132,8 @@ export function MealPlanView() {
           aria-describedby="meal-plan-prompt-description"
           data-test-id="meal-plan-prompt"
         />
-        <p
-          id="meal-plan-prompt-description"
-          className="text-xs text-muted-foreground"
-        >
-          This is the exact prompt sent to the AI when you click “Generate Meal
-          Plan”. You cannot edit it.
+        <p id="meal-plan-prompt-description" className="text-xs text-muted-foreground">
+          This is the exact prompt sent to the AI when you click “Generate Meal Plan”. You cannot edit it.
         </p>
       </section>
       <div className="flex flex-wrap items-center gap-3">
@@ -170,11 +144,7 @@ export function MealPlanView() {
           data-test-id="meal-plan-generate"
         />
         {mealPlan != null && (
-          <RegenerateAllButton
-            onClick={generate}
-            loading={loading}
-            data-test-id="meal-plan-regenerate"
-          />
+          <RegenerateAllButton onClick={generate} loading={loading} data-test-id="meal-plan-regenerate" />
         )}
         {mealPlan != null && (
           <a
@@ -200,15 +170,11 @@ export function MealPlanView() {
           data-test-id="meal-plan-error"
         />
       )}
-      {!loading && !mealPlan && !hasProducts && !error && (
-        <MealPlanEmptyState data-test-id="meal-plan-empty" />
-      )}
+      {!loading && !mealPlan && !hasProducts && !error && <MealPlanEmptyState data-test-id="meal-plan-empty" />}
       {!loading && !mealPlan && hasProducts && !error && (
         <MealPlanEmptyStateWithInventory data-test-id="meal-plan-empty-with-inventory" />
       )}
-      {!loading && mealPlan && (
-        <MealPlanTable mealPlan={mealPlan} data-test-id="meal-plan-table" />
-      )}
+      {!loading && mealPlan && <MealPlanTable mealPlan={mealPlan} data-test-id="meal-plan-table" />}
     </main>
   );
 }

@@ -61,6 +61,6 @@ export class ShoppingListPage {
   }
 
   async waitForLoadingFinished() {
-    await this.loadingMessage.waitFor({ state: "hidden" }).catch(() => {});
+    await this.loadingMessage.waitFor({ state: "hidden" }).catch(() => undefined);
   }
 }

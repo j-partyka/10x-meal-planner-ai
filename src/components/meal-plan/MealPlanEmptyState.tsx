@@ -10,9 +10,7 @@ export interface MealPlanEmptyStateProps {
  * Empty state when there is no meal plan and inventory is empty.
  * Directs user to add products; CTA to inventory (/).
  */
-export function MealPlanEmptyState({
-  "data-test-id": dataTestId,
-}: MealPlanEmptyStateProps = {}) {
+export function MealPlanEmptyState({ "data-test-id": dataTestId }: MealPlanEmptyStateProps = {}) {
   return (
     <div
       className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-muted-foreground/25 bg-muted/30 px-6 py-12 text-center"

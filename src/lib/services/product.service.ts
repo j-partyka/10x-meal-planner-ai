@@ -1,10 +1,5 @@
-import type { SupabaseClient } from '../../db/supabase.client';
-import type {
-  CreateProductCommand,
-  ListProductsQuery,
-  ProductDto,
-  UpdateProductCommand,
-} from '../../types';
+import type { SupabaseClient } from "../../db/supabase.client";
+import type { CreateProductCommand, ListProductsQuery, ProductDto, UpdateProductCommand } from "../../types";
 
 export interface ListProductsResult {
   data: ProductDto[];
@@ -20,12 +15,9 @@ export async function listProducts(
   userId: string,
   query: ListProductsQuery
 ): Promise<ListProductsResult> {
-  const { search, category, sort = 'expiration_date', order = 'asc', page = 1, limit = 50 } = query;
+  const { search, category, sort = "expiration_date", order = "asc", page = 1, limit = 50 } = query;
 
-  let q = supabase
-    .from('products')
-    .select('*', { count: 'exact' })
-    .eq('user_id', userId);
+  let q = supabase.from("products").select("*", { count: "exact" }).eq("user_id", userId);
 
   if (search?.trim()) {
     const term = `%${search.trim()}%`;
@@ -33,10 +25,10 @@ export async function listProducts(
   }
 
   if (category?.trim()) {
-    q = q.eq('category', category.trim());
+    q = q.eq("category", category.trim());
   }
 
-  q = q.order(sort, { ascending: order === 'asc' });
+  q = q.order(sort, { ascending: order === "asc" });
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -57,20 +49,11 @@ export async function listProducts(
 /**
  * Returns a single product by id if it belongs to the user, otherwise null.
  */
-export async function getProductById(
-  supabase: SupabaseClient,
-  userId: string,
-  id: string
-): Promise<ProductDto | null> {
-  const { data, error } = await supabase
-    .from('products')
-    .select()
-    .eq('id', id)
-    .eq('user_id', userId)
-    .single();
+export async function getProductById(supabase: SupabaseClient, userId: string, id: string): Promise<ProductDto | null> {
+  const { data, error } = await supabase.from("products").select().eq("id", id).eq("user_id", userId).single();
 
   if (error) {
-    if (error.code === 'PGRST116') {
+    if (error.code === "PGRST116") {
       return null;
     }
     throw error;
@@ -88,7 +71,7 @@ export async function createProduct(
   body: CreateProductCommand
 ): Promise<ProductDto> {
   const { data, error } = await supabase
-    .from('products')
+    .from("products")
     .insert({
       ...body,
       user_id: userId,
@@ -113,10 +96,10 @@ export async function updateProduct(
   body: UpdateProductCommand
 ): Promise<ProductDto | null> {
   const { data, error } = await supabase
-    .from('products')
+    .from("products")
     .update(body)
-    .eq('id', id)
-    .eq('user_id', userId)
+    .eq("id", id)
+    .eq("user_id", userId)
     .select()
     .single();
 
@@ -134,17 +117,8 @@ export async function updateProduct(
 /**
  * Deletes a product by id. Returns true if a row was deleted, false if not found/not owned.
  */
-export async function deleteProduct(
-  supabase: SupabaseClient,
-  userId: string,
-  id: string
-): Promise<boolean> {
-  const { data, error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', userId)
-    .select('id');
+export async function deleteProduct(supabase: SupabaseClient, userId: string, id: string): Promise<boolean> {
+  const { data, error } = await supabase.from("products").delete().eq("id", id).eq("user_id", userId).select("id");
 
   if (error) {
     throw error;

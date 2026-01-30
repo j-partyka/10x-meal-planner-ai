@@ -1,11 +1,11 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
-import { errorResponse, jsonResponse } from '../../../lib/api-responses';
-import { logServerError, logValidationFailure } from '../../../lib/api-logger';
-import { computeShoppingListCommandSchema } from '../../../lib/schemas';
-import { computeShoppingList } from '../../../lib/services/shopping-list.service';
-import type { InventoryItemForList } from '../../../lib/services/shopping-list.service';
-import { listProducts } from '../../../lib/services/product.service';
+import { errorResponse, jsonResponse } from "../../../lib/api-responses";
+import { logServerError, logValidationFailure } from "../../../lib/api-logger";
+import { computeShoppingListCommandSchema } from "../../../lib/schemas";
+import { computeShoppingList } from "../../../lib/services/shopping-list.service";
+import type { InventoryItemForList } from "../../../lib/services/shopping-list.service";
+import { listProducts } from "../../../lib/services/product.service";
 
 export const prerender = false;
 
@@ -30,14 +30,14 @@ function toInventoryForList(
 export const POST: APIRoute = async ({ locals, request }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return errorResponse('Invalid JSON body', 400);
+    return errorResponse("Invalid JSON body", 400);
   }
 
   const parsed = computeShoppingListCommandSchema.safeParse(body);
@@ -46,8 +46,8 @@ export const POST: APIRoute = async ({ locals, request }) => {
     const detailsList = Object.entries(details).flatMap(([field, messages]) =>
       (messages ?? []).map((message) => ({ field, message }))
     );
-    logValidationFailure('POST /api/shopping-list', detailsList);
-    return errorResponse('Validation failed', 400, detailsList);
+    logValidationFailure("POST /api/shopping-list", detailsList);
+    return errorResponse("Validation failed", 400, detailsList);
   }
 
   try {
@@ -59,7 +59,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
     const result = computeShoppingList(parsed.data.mealPlan, inventory);
     return jsonResponse(result, 200);
   } catch (err) {
-    logServerError('POST /api/shopping-list', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("POST /api/shopping-list", err);
+    return errorResponse("Internal server error", 500);
   }
 };

@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-env node */
+/* eslint-disable no-console -- CLI output */
 /**
  * Starts the dev server for E2E with env from .env.test so tests use the same
  * Supabase project and E2E user. Writes .env.e2e (mode-specific) so Vite
@@ -17,15 +19,11 @@ const envE2ePath = path.join(cwd, ".env.e2e");
 
 dotenv.config({ path: envTestPath });
 
-const publicUrl =
-  process.env.PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-const publicKey =
-  process.env.PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
+const publicUrl = process.env.PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const publicKey = process.env.PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
 
 if (!publicUrl || !publicKey) {
-  console.error(
-    "Missing SUPABASE_URL/SUPABASE_KEY or PUBLIC_SUPABASE_* in .env.test. Add them for E2E."
-  );
+  console.error("Missing SUPABASE_URL/SUPABASE_KEY or PUBLIC_SUPABASE_* in .env.test. Add them for E2E.");
   process.exit(1);
 }
 

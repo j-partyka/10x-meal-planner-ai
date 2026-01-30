@@ -8,11 +8,7 @@ interface ModeSwitcherProps {
 }
 
 /** Tabs to switch between Sign in and Create account. */
-export function ModeSwitcher({
-  value,
-  onValueChange,
-  "data-test-id": dataTestId,
-}: ModeSwitcherProps) {
+export function ModeSwitcher({ value, onValueChange, "data-test-id": dataTestId }: ModeSwitcherProps) {
   return (
     <Tabs
       value={value}

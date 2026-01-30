@@ -1,16 +1,16 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-const productUnitEnum = z.enum(['kg', 'g', 'ml', 'L', 'pieces']);
+const productUnitEnum = z.enum(["kg", "g", "ml", "L", "pieces"]);
 
 const dateStringSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD')
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD")
   .refine(
     (s) => {
       const d = new Date(s);
       return !Number.isNaN(d.getTime());
     },
-    { message: 'Invalid date' }
+    { message: "Invalid date" }
   );
 
 /** Product-like item in POST /api/meal-plan body (products array). */
@@ -59,7 +59,7 @@ const mealPlanDaySchema = z.object({
 
 /** Full meal plan (days array). */
 const mealPlanDtoSchema = z.object({
-  days: z.array(mealPlanDaySchema).min(1, 'Meal plan must have at least one day'),
+  days: z.array(mealPlanDaySchema).min(1, "Meal plan must have at least one day"),
 });
 
 /** Request body for POST /api/shopping-list. */

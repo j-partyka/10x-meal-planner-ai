@@ -16,13 +16,13 @@ export interface JsonSchemaObject {
 
 /** Single message in the chat (system, user, or assistant). */
 export interface OpenRouterMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
 /** Response format for structured output (e.g. JSON schema). */
 export interface OpenRouterResponseFormat {
-  type: 'json_schema';
+  type: "json_schema";
   json_schema: {
     name: string;
     strict: boolean;

@@ -21,9 +21,7 @@ export interface ServerCookieAdapter {
  */
 export function createSupabaseServerClient(adapter: ServerCookieAdapter) {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing SUPABASE_URL or SUPABASE_KEY for server-side auth. Add them to .env.local."
-    );
+    throw new Error("Missing SUPABASE_URL or SUPABASE_KEY for server-side auth. Add them to .env.local.");
   }
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {

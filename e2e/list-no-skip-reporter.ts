@@ -1,11 +1,5 @@
-import type {
-  Reporter,
-  FullConfig,
-  Suite,
-  TestCase,
-  TestResult,
-  FullResult,
-} from "@playwright/test/reporter";
+/* eslint-disable no-console -- reporter prints to stdio */
+import type { Reporter, TestCase, TestResult, FullResult } from "@playwright/test/reporter";
 
 /**
  * List-style reporter that does not show skipped tests in the summary.
@@ -28,6 +22,7 @@ class ListNoSkipReporter implements Reporter {
     console.log(`  ${symbol}   ${this.index} …${loc} › ${title}`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- required by Reporter interface
   onEnd(_result: FullResult): void {
     const parts = [`${this.passed} passed`];
     if (this.failed > 0) parts.push(`${this.failed} failed`);

@@ -1,27 +1,17 @@
-import type { APIRoute } from 'astro';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import type { APIRoute } from "astro";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import dotenv from 'dotenv';
-import { errorResponse, jsonResponse } from '../../../lib/api-responses';
-import { logServerError, logValidationFailure } from '../../../lib/api-logger';
-import { generateMealPlanCommandSchema } from '../../../lib/schemas';
-import { OPENROUTER_DEFAULT_MODEL } from '../../../lib/services/openrouter.config';
-import {
-  createOpenRouterService,
-  getOpenRouterApiKey,
-  isOpenRouterConfigured,
-} from '../../../lib/services/openrouter';
-import {
-  generateMealPlan,
-  getMealPlanPrompt,
-} from '../../../lib/services/meal-plan.service';
-import {
-  MealPlanAiError,
-  MealPlanRateLimitError,
-} from '../../../lib/services/meal-plan.errors';
-import { listProducts } from '../../../lib/services/product.service';
-import type { MealPlanProductInput, ProductDto } from '../../../types';
+import dotenv from "dotenv";
+import { errorResponse, jsonResponse } from "../../../lib/api-responses";
+import { logServerError, logValidationFailure } from "../../../lib/api-logger";
+import { generateMealPlanCommandSchema } from "../../../lib/schemas";
+import { OPENROUTER_DEFAULT_MODEL } from "../../../lib/services/openrouter.config";
+import { createOpenRouterService, getOpenRouterApiKey, isOpenRouterConfigured } from "../../../lib/services/openrouter";
+import { generateMealPlan, getMealPlanPrompt } from "../../../lib/services/meal-plan.service";
+import { MealPlanAiError, MealPlanRateLimitError } from "../../../lib/services/meal-plan.errors";
+import { listProducts } from "../../../lib/services/product.service";
+import type { MealPlanProductInput, ProductDto } from "../../../types";
 
 export const prerender = false;
 
@@ -29,8 +19,8 @@ export const prerender = false;
 function loadEnvLocal(): void {
   try {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const fromFile = path.join(path.resolve(__dirname, '../../../..'), '.env.local');
-    const fromCwd = path.join(process.cwd(), '.env.local');
+    const fromFile = path.join(path.resolve(__dirname, "../../../.."), ".env.local");
+    const fromCwd = path.join(process.cwd(), ".env.local");
     dotenv.config({ path: fromFile });
     dotenv.config({ path: fromCwd });
   } catch {
@@ -70,10 +60,10 @@ function toMealPlanProductInput(row: ProductDto): MealPlanProductInput {
 export const GET: APIRoute = async ({ locals, url }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
-  const startDate = resolveStartDate(url.searchParams.get('startDate') ?? undefined);
+  const startDate = resolveStartDate(url.searchParams.get("startDate") ?? undefined);
 
   try {
     const { data } = await listProducts(locals.supabase, userId, {
@@ -84,8 +74,8 @@ export const GET: APIRoute = async ({ locals, url }) => {
     const prompt = getMealPlanPrompt(products, startDate);
     return jsonResponse({ prompt }, 200);
   } catch (err) {
-    logServerError('GET /api/meal-plan (prompt)', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("GET /api/meal-plan (prompt)", err);
+    return errorResponse("Internal server error", 500);
   }
 };
 
@@ -96,14 +86,14 @@ export const GET: APIRoute = async ({ locals, url }) => {
 export const POST: APIRoute = async ({ locals, request }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return errorResponse('Invalid JSON body', 400);
+    return errorResponse("Invalid JSON body", 400);
   }
 
   const parsed = generateMealPlanCommandSchema.safeParse(body);
@@ -112,8 +102,8 @@ export const POST: APIRoute = async ({ locals, request }) => {
     const detailsList = Object.entries(details).flatMap(([field, messages]) =>
       (messages ?? []).map((message) => ({ field, message }))
     );
-    logValidationFailure('POST /api/meal-plan', detailsList);
-    return errorResponse('Validation failed', 400, detailsList);
+    logValidationFailure("POST /api/meal-plan", detailsList);
+    return errorResponse("Validation failed", 400, detailsList);
   }
 
   let products: MealPlanProductInput[];
@@ -123,7 +113,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
       category: p.category ?? null,
     }));
   } else if (parsed.data.products !== undefined && parsed.data.products.length === 0) {
-    return errorResponse('Add products to inventory first', 422);
+    return errorResponse("Add products to inventory first", 422);
   } else {
     try {
       const { data } = await listProducts(locals.supabase, userId, {
@@ -131,12 +121,12 @@ export const POST: APIRoute = async ({ locals, request }) => {
         page: 1,
       });
       if (data.length === 0) {
-        return errorResponse('Add products to inventory first', 422);
+        return errorResponse("Add products to inventory first", 422);
       }
       products = data.map(toMealPlanProductInput);
     } catch (err) {
-      logServerError('POST /api/meal-plan (list products)', err);
-      return errorResponse('Internal server error', 500);
+      logServerError("POST /api/meal-plan (list products)", err);
+      return errorResponse("Internal server error", 500);
     }
   }
 
@@ -147,9 +137,9 @@ export const POST: APIRoute = async ({ locals, request }) => {
   if (!isOpenRouterConfigured()) {
     return jsonResponse(
       {
-        error: 'OpenRouter API key is not configured.',
-        code: 'OPENROUTER_NOT_CONFIGURED',
-        hint: 'Set OPENROUTER_API_KEY in .env.local (project root). Then run: npm run clean && npm run dev',
+        error: "OpenRouter API key is not configured.",
+        code: "OPENROUTER_NOT_CONFIGURED",
+        hint: "Set OPENROUTER_API_KEY in .env.local (project root). Then run: npm run clean && npm run dev",
       },
       503
     );
@@ -173,7 +163,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
     );
   } catch (err) {
     if (err instanceof MealPlanAiError) {
-      logServerError('POST /api/meal-plan (AI)', err);
+      logServerError("POST /api/meal-plan (AI)", err);
       if (err instanceof MealPlanRateLimitError && err.statusCode === 429) {
         const body: { error: string; retryAfter?: number } = {
           error: err.message,
@@ -183,18 +173,17 @@ export const POST: APIRoute = async ({ locals, request }) => {
       }
       const status = err.statusCode;
       if (status === 503 || status === 502) {
-        const isConfig =
-          /API key|misconfigured|not configured/i.test(err.message);
+        const isConfig = /API key|misconfigured|not configured/i.test(err.message);
         const isProviderError = /provider returned|temporarily unavailable/i.test(err.message);
         const hint = isConfig
-          ? 'Set OPENROUTER_API_KEY in .env.local (project root). Then run: npm run clean && npm run dev'
+          ? "Set OPENROUTER_API_KEY in .env.local (project root). Then run: npm run clean && npm run dev"
           : isProviderError
-            ? 'OpenRouter or the model may be temporarily unavailable. Try again in a few minutes or check https://status.openrouter.ai'
-            : 'Meal plan service is temporarily unavailable. Try again later.';
+            ? "OpenRouter or the model may be temporarily unavailable. Try again in a few minutes or check https://status.openrouter.ai"
+            : "Meal plan service is temporarily unavailable. Try again later.";
         return jsonResponse(
           {
             error: err.message,
-            code: isConfig ? 'OPENROUTER_NOT_CONFIGURED' : 'SERVICE_UNAVAILABLE',
+            code: isConfig ? "OPENROUTER_NOT_CONFIGURED" : "SERVICE_UNAVAILABLE",
             hint,
           },
           status
@@ -202,7 +191,7 @@ export const POST: APIRoute = async ({ locals, request }) => {
       }
       return errorResponse(err.message, status);
     }
-    logServerError('POST /api/meal-plan', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("POST /api/meal-plan", err);
+    return errorResponse("Internal server error", 500);
   }
 };

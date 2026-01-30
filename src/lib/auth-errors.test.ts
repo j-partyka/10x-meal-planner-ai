@@ -12,9 +12,7 @@ describe("auth-errors", () => {
       expect(mapSignInError(null)).toBe(SIGN_IN_MESSAGE);
       expect(mapSignInError(undefined)).toBe(SIGN_IN_MESSAGE);
       expect(mapSignInError(new Error("Invalid login"))).toBe(SIGN_IN_MESSAGE);
-      expect(
-        mapSignInError({ message: "Email not confirmed", code: "email_not_confirmed" })
-      ).toBe(SIGN_IN_MESSAGE);
+      expect(mapSignInError({ message: "Email not confirmed", code: "email_not_confirmed" })).toBe(SIGN_IN_MESSAGE);
     });
   });
 
@@ -30,27 +28,19 @@ describe("auth-errors", () => {
     });
 
     it("returns EMAIL_EXISTS_MESSAGE when message includes 'already registered'", () => {
-      expect(mapSignUpError({ message: "User already registered" })).toBe(
-        EMAIL_EXISTS_MESSAGE
-      );
+      expect(mapSignUpError({ message: "User already registered" })).toBe(EMAIL_EXISTS_MESSAGE);
     });
 
     it("returns EMAIL_EXISTS_MESSAGE when message includes 'already exists'", () => {
-      expect(mapSignUpError({ message: "Email already exists" })).toBe(
-        EMAIL_EXISTS_MESSAGE
-      );
+      expect(mapSignUpError({ message: "Email already exists" })).toBe(EMAIL_EXISTS_MESSAGE);
     });
 
     it("returns EMAIL_EXISTS_MESSAGE when message includes 'user already registered'", () => {
-      expect(mapSignUpError({ message: "user already registered" })).toBe(
-        EMAIL_EXISTS_MESSAGE
-      );
+      expect(mapSignUpError({ message: "user already registered" })).toBe(EMAIL_EXISTS_MESSAGE);
     });
 
     it("returns EMAIL_EXISTS_MESSAGE when code is 'user_already_exists'", () => {
-      expect(mapSignUpError({ code: "user_already_exists" })).toBe(
-        EMAIL_EXISTS_MESSAGE
-      );
+      expect(mapSignUpError({ code: "user_already_exists" })).toBe(EMAIL_EXISTS_MESSAGE);
     });
 
     it("returns EMAIL_EXISTS_MESSAGE when status is 422", () => {
@@ -58,27 +48,19 @@ describe("auth-errors", () => {
     });
 
     it("returns EMAIL_EXISTS_MESSAGE for case-insensitive message match", () => {
-      expect(mapSignUpError({ message: "ALREADY REGISTERED" })).toBe(
-        EMAIL_EXISTS_MESSAGE
-      );
+      expect(mapSignUpError({ message: "ALREADY REGISTERED" })).toBe(EMAIL_EXISTS_MESSAGE);
     });
 
     it("returns WEAK_PASSWORD_MESSAGE when message includes 'password' and '8'", () => {
-      expect(
-        mapSignUpError({ message: "Password must be at least 8 characters" })
-      ).toBe(WEAK_PASSWORD_MESSAGE);
+      expect(mapSignUpError({ message: "Password must be at least 8 characters" })).toBe(WEAK_PASSWORD_MESSAGE);
     });
 
     it("returns WEAK_PASSWORD_MESSAGE when message includes 'password' and 'length'", () => {
-      expect(
-        mapSignUpError({ message: "Password length too short" })
-      ).toBe(WEAK_PASSWORD_MESSAGE);
+      expect(mapSignUpError({ message: "Password length too short" })).toBe(WEAK_PASSWORD_MESSAGE);
     });
 
     it("returns WEAK_PASSWORD_MESSAGE when message includes 'password' and 'least'", () => {
-      expect(
-        mapSignUpError({ message: "Password should be at least 8 chars" })
-      ).toBe(WEAK_PASSWORD_MESSAGE);
+      expect(mapSignUpError({ message: "Password should be at least 8 chars" })).toBe(WEAK_PASSWORD_MESSAGE);
     });
 
     it("returns WEAK_PASSWORD_MESSAGE when code is 'weak_password'", () => {
@@ -86,15 +68,11 @@ describe("auth-errors", () => {
     });
 
     it("returns WEAK_PASSWORD_MESSAGE when message includes 'password should be'", () => {
-      expect(
-        mapSignUpError({ message: "Password should be stronger" })
-      ).toBe(WEAK_PASSWORD_MESSAGE);
+      expect(mapSignUpError({ message: "Password should be stronger" })).toBe(WEAK_PASSWORD_MESSAGE);
     });
 
     it("returns GENERIC_MESSAGE for unknown error shape", () => {
-      expect(mapSignUpError({ message: "Something else", code: "other" })).toBe(
-        GENERIC_MESSAGE
-      );
+      expect(mapSignUpError({ message: "Something else", code: "other" })).toBe(GENERIC_MESSAGE);
     });
 
     it("email-exists branch takes precedence over weak-password when both match", () => {

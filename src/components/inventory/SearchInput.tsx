@@ -78,12 +78,7 @@ export function SearchInput({
           <span aria-hidden>×</span>
         </Button>
       )}
-      {loading && (
-        <span
-          className="absolute right-3 h-4 w-4 animate-pulse rounded-full bg-muted"
-          aria-hidden
-        />
-      )}
+      {loading && <span className="absolute right-3 h-4 w-4 animate-pulse rounded-full bg-muted" aria-hidden />}
     </div>
   );
 }

@@ -57,12 +57,13 @@ test.describe("Inventory — CRUD, search", () => {
     await expect(row).toBeVisible();
     const productId = await row.getAttribute("data-product-id");
     expect(productId).toBeTruthy();
+    if (!productId) throw new Error("productId missing");
 
-    await inventoryPage.editProduct(productId!, { quantity: "5" });
+    await inventoryPage.editProduct(productId, { quantity: "5" });
     await expect(inventoryPage.productFormModal).not.toBeVisible();
     await inventoryPage.waitForLoadingFinished();
 
-    const updatedRow = inventoryPage.getProductRow(productId!);
+    const updatedRow = inventoryPage.getProductRow(productId);
     await expect(updatedRow).toContainText("5");
   });
 
@@ -105,10 +106,11 @@ test.describe("Inventory — CRUD, search", () => {
     const row = page.getByTestId("product-row").filter({ hasText: name }).first();
     const productId = await row.getAttribute("data-product-id");
     expect(productId).toBeTruthy();
+    if (!productId) throw new Error("productId missing");
 
-    await inventoryPage.confirmDeleteProduct(productId!);
+    await inventoryPage.confirmDeleteProduct(productId);
     await inventoryPage.waitForLoadingFinished();
 
-    await expect(inventoryPage.getProductRow(productId!)).not.toBeVisible();
+    await expect(inventoryPage.getProductRow(productId)).not.toBeVisible();
   });
 });

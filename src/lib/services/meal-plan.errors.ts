@@ -8,14 +8,14 @@ export class MealPlanAiError extends Error {
     public readonly statusCode: 429 | 502 | 503 | 504
   ) {
     super(message);
-    this.name = 'MealPlanAiError';
+    this.name = "MealPlanAiError";
   }
 }
 
 export class MealPlanTimeoutError extends MealPlanAiError {
   constructor() {
-    super('Meal plan generation timed out. Please try again.', 504);
-    this.name = 'MealPlanTimeoutError';
+    super("Meal plan generation timed out. Please try again.", 504);
+    this.name = "MealPlanTimeoutError";
   }
 }
 
@@ -24,21 +24,18 @@ export class MealPlanRateLimitError extends MealPlanAiError {
   public readonly retryAfter?: number;
 
   constructor(
-    message: string = 'The AI provider is rate-limiting requests. Free tier has strict limits. Please wait and try again.',
+    message = "The AI provider is rate-limiting requests. Free tier has strict limits. Please wait and try again.",
     retryAfter?: number
   ) {
     super(message, 429);
-    this.name = 'MealPlanRateLimitError';
+    this.name = "MealPlanRateLimitError";
     this.retryAfter = retryAfter;
   }
 }
 
 export class MealPlanProviderError extends MealPlanAiError {
-  constructor(
-    statusCode: 502 | 503,
-    message: string = 'Meal plan service is temporarily unavailable. Please try again.'
-  ) {
+  constructor(statusCode: 502 | 503, message = "Meal plan service is temporarily unavailable. Please try again.") {
     super(message, statusCode);
-    this.name = 'MealPlanProviderError';
+    this.name = "MealPlanProviderError";
   }
 }

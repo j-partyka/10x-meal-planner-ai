@@ -1,3 +1,4 @@
+/* eslint-disable no-console -- dev-only debug logging */
 /**
  * Maps Supabase Auth errors to user-facing messages.
  * Never expose raw API or technical errors to the user.
@@ -35,10 +36,7 @@ export function mapSignUpError(error: unknown): string {
     return EMAIL_EXISTS_MESSAGE;
   }
 
-  if (
-    msg.includes("password") &&
-    (msg.includes("8") || msg.includes("length") || msg.includes("least"))
-  ) {
+  if (msg.includes("password") && (msg.includes("8") || msg.includes("length") || msg.includes("least"))) {
     return WEAK_PASSWORD_MESSAGE;
   }
 

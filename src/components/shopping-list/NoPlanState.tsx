@@ -11,7 +11,8 @@ export function NoPlanState() {
       data-test-id="shopping-list-no-plan"
     >
       <p className="text-muted-foreground text-sm">
-        You don&apos;t have a meal plan yet. Create one from the Meal plan page, or add products to your inventory first.
+        You don&apos;t have a meal plan yet. Create one from the Meal plan page, or add products to your inventory
+        first.
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         <a

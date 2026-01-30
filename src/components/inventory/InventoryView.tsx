@@ -25,17 +25,10 @@ function buildListProductsUrl(): string {
   return `${API_PRODUCTS}?${params.toString()}`;
 }
 
-function filterProductsBySearch(
-  products: ProductDto[],
-  searchQuery: string
-): ProductDto[] {
+function filterProductsBySearch(products: ProductDto[], searchQuery: string): ProductDto[] {
   if (!searchQuery.trim()) return products;
   const q = searchQuery.trim().toLowerCase();
-  return products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(q) ||
-      (p.category ?? "").toLowerCase().includes(q)
-  );
+  return products.filter((p) => p.name.toLowerCase().includes(q) || (p.category ?? "").toLowerCase().includes(q));
 }
 
 export function InventoryView() {
@@ -144,9 +137,7 @@ export function InventoryView() {
         />
       )}
 
-      {showNoSearchResults && (
-        <NoSearchResultsState onClearSearch={() => setSearchQuery("")} />
-      )}
+      {showNoSearchResults && <NoSearchResultsState onClearSearch={() => setSearchQuery("")} />}
 
       {showList && (
         <ProductTable

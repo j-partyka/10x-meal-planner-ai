@@ -15,9 +15,7 @@ export function MealPlanEmptyStateWithInventory({
       role="status"
       data-test-id={dataTestId}
     >
-      <p className="text-muted-foreground text-sm">
-        Generate your weekly meal plan based on your inventory.
-      </p>
+      <p className="text-muted-foreground text-sm">Generate your weekly meal plan based on your inventory.</p>
     </div>
   );
 }

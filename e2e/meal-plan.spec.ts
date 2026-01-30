@@ -53,9 +53,7 @@ test.describe("Meal plan — generate, table, regenerate", () => {
     await expect(mealPlanPage.mealPlanTable).toBeVisible();
   });
 
-  test.skip("link to shopping list navigates to shopping list page", async ({
-    page,
-  }) => {
+  test.skip("link to shopping list navigates to shopping list page", async ({ page }) => {
     const inventoryPage = new InventoryPage(page);
     await inventoryPage.goto();
     await inventoryPage.waitForLoadingFinished();

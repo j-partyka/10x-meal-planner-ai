@@ -10,9 +10,7 @@ test.describe("Smoke — auth and app load", () => {
     await expect(loginPage.signInSubmitButton).toBeVisible();
   });
 
-  test("unauthenticated access to home redirects to login", async ({
-    page,
-  }) => {
+  test("unauthenticated access to home redirects to login", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/login/);
   });
