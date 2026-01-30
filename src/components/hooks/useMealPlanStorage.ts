@@ -3,9 +3,7 @@ import type { MealPlanDto, ShoppingListDto } from "@/types";
 
 const SESSION_STORAGE_KEY = "meal-planner-plan";
 
-function isValidStoredPlan(
-  value: unknown
-): value is {
+function isValidStoredPlan(value: unknown): value is {
   mealPlan: MealPlanDto;
   shoppingList: ShoppingListDto;
   prompt?: string;
@@ -14,12 +12,7 @@ function isValidStoredPlan(
   const o = value as Record<string, unknown>;
   const mealPlan = o.mealPlan;
   const shoppingList = o.shoppingList;
-  if (
-    mealPlan == null ||
-    typeof mealPlan !== "object" ||
-    !Array.isArray((mealPlan as MealPlanDto).days)
-  )
-    return false;
+  if (mealPlan == null || typeof mealPlan !== "object" || !Array.isArray((mealPlan as MealPlanDto).days)) return false;
   if (
     shoppingList == null ||
     typeof shoppingList !== "object" ||
@@ -31,11 +24,11 @@ function isValidStoredPlan(
   return true;
 }
 
-type StoredPlan = {
+interface StoredPlan {
   mealPlan: MealPlanDto | null;
   shoppingList: ShoppingListDto | null;
   prompt: string | null;
-};
+}
 
 let initialCache: StoredPlan | null = null;
 
@@ -73,11 +66,7 @@ export interface UseMealPlanStorageReturn {
   shoppingList: ShoppingListDto | null;
   /** Prompt sent to the LLM for the current plan (if available). */
   prompt: string | null;
-  setMealPlanAndList: (
-    mealPlan: MealPlanDto,
-    shoppingList: ShoppingListDto,
-    prompt?: string
-  ) => void;
+  setMealPlanAndList: (mealPlan: MealPlanDto, shoppingList: ShoppingListDto, prompt?: string) => void;
   hydrate: () => void;
 }
 
@@ -86,15 +75,9 @@ export interface UseMealPlanStorageReturn {
  * hydrate() loads from sessionStorage; setMealPlanAndList() updates state and persists.
  */
 export function useMealPlanStorage(): UseMealPlanStorageReturn {
-  const [mealPlan, setMealPlan] = useState<MealPlanDto | null>(
-    () => getInitialFromStorage().mealPlan
-  );
-  const [shoppingList, setShoppingList] = useState<ShoppingListDto | null>(
-    () => getInitialFromStorage().shoppingList
-  );
-  const [prompt, setPrompt] = useState<string | null>(
-    () => getInitialFromStorage().prompt
-  );
+  const [mealPlan, setMealPlan] = useState<MealPlanDto | null>(() => getInitialFromStorage().mealPlan);
+  const [shoppingList, setShoppingList] = useState<ShoppingListDto | null>(() => getInitialFromStorage().shoppingList);
+  const [prompt, setPrompt] = useState<string | null>(() => getInitialFromStorage().prompt);
 
   const hydrate = useCallback(() => {
     if (typeof sessionStorage === "undefined") return;
@@ -111,27 +94,24 @@ export function useMealPlanStorage(): UseMealPlanStorageReturn {
     }
   }, []);
 
-  const setMealPlanAndList = useCallback(
-    (plan: MealPlanDto, list: ShoppingListDto, promptText?: string) => {
-      setMealPlan(plan);
-      setShoppingList(list);
-      setPrompt(promptText ?? null);
-      if (typeof sessionStorage === "undefined") return;
-      try {
-        sessionStorage.setItem(
-          SESSION_STORAGE_KEY,
-          JSON.stringify({
-            mealPlan: plan,
-            shoppingList: list,
-            prompt: promptText ?? undefined,
-          })
-        );
-      } catch {
-        // ignore
-      }
-    },
-    []
-  );
+  const setMealPlanAndList = useCallback((plan: MealPlanDto, list: ShoppingListDto, promptText?: string) => {
+    setMealPlan(plan);
+    setShoppingList(list);
+    setPrompt(promptText ?? null);
+    if (typeof sessionStorage === "undefined") return;
+    try {
+      sessionStorage.setItem(
+        SESSION_STORAGE_KEY,
+        JSON.stringify({
+          mealPlan: plan,
+          shoppingList: list,
+          prompt: promptText ?? undefined,
+        })
+      );
+    } catch {
+      // ignore
+    }
+  }, []);
 
   return { mealPlan, shoppingList, prompt, setMealPlanAndList, hydrate };
 }

@@ -14,9 +14,7 @@ teardown("clean Supabase products table (E2E instance)", async () => {
   const password = process.env.E2E_PASSWORD;
 
   if (!url || !key || !email || !password) {
-    throw new Error(
-      "Teardown requires .env.test: SUPABASE_URL, SUPABASE_KEY, E2E_USERNAME, E2E_PASSWORD"
-    );
+    throw new Error("Teardown requires .env.test: SUPABASE_URL, SUPABASE_KEY, E2E_USERNAME, E2E_PASSWORD");
   }
 
   const supabase = createClient<Database>(url, key);
@@ -32,10 +30,7 @@ teardown("clean Supabase products table (E2E instance)", async () => {
     throw new Error("Teardown: no user after sign-in");
   }
 
-  const { error: deleteError } = await supabase
-    .from("products")
-    .delete()
-    .eq("user_id", user.id);
+  const { error: deleteError } = await supabase.from("products").delete().eq("user_id", user.id);
 
   if (deleteError) {
     throw new Error(`Teardown delete products failed: ${deleteError.message}`);

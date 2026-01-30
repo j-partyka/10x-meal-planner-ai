@@ -16,16 +16,13 @@ export function AppNav() {
     window.location.href = LOGIN_PATH;
   }, []);
 
-  const handleNavClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      if (e.button !== 0 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
-        return;
-      }
-      e.preventDefault();
-      window.location.href = href;
-    },
-    []
-  );
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (e.button !== 0 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+      return;
+    }
+    e.preventDefault();
+    window.location.assign(href);
+  }, []);
 
   return (
     <nav
@@ -52,13 +49,7 @@ export function AppNav() {
           </a>
         ))}
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleLogout}
-        type="button"
-        data-test-id="nav-logout"
-      >
+      <Button variant="outline" size="sm" onClick={handleLogout} type="button" data-test-id="nav-logout">
         Logout
       </Button>
     </nav>

@@ -9,6 +9,7 @@ test.describe("Shopping list — no plan, list after generate", () => {
   test.beforeEach(async ({ page }) => {
     const creds = getE2ECredentials();
     test.skip(!creds, "E2E_USERNAME and E2E_PASSWORD must be set in .env.test");
+    if (!creds) return;
 
     const loginPage = new LoginPage(page);
     await loginPage.goto();
@@ -16,9 +17,7 @@ test.describe("Shopping list — no plan, list after generate", () => {
     await loginPage.waitForRedirect();
   });
 
-  test.skip("S4: no plan state shows links to meal plan and inventory", async ({
-    page,
-  }) => {
+  test.skip("S4: no plan state shows links to meal plan and inventory", async ({ page }) => {
     const shoppingListPage = new ShoppingListPage(page);
     await shoppingListPage.goto();
 
@@ -27,9 +26,7 @@ test.describe("Shopping list — no plan, list after generate", () => {
     await expect(shoppingListPage.noPlanGoToInventory).toBeVisible();
   });
 
-  test.skip("S4: after generating plan, shopping list shows grouped list", async ({
-    page,
-  }) => {
+  test.skip("S4: after generating plan, shopping list shows grouped list", async ({ page }) => {
     const inventoryPage = new InventoryPage(page);
     await inventoryPage.goto();
     await inventoryPage.waitForLoadingFinished();

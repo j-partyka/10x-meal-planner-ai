@@ -16,12 +16,7 @@ export interface ErrorStateProps {
   "data-test-id"?: string;
 }
 
-export function ErrorState({
-  error,
-  onRetry,
-  retryDisabled = false,
-  "data-test-id": dataTestId,
-}: ErrorStateProps) {
+export function ErrorState({ error, onRetry, retryDisabled = false, "data-test-id": dataTestId }: ErrorStateProps) {
   if (!error) return null;
 
   return (
@@ -32,9 +27,7 @@ export function ErrorState({
       data-test-id={dataTestId}
     >
       <p className="text-sm">{error.message}</p>
-      {error.hint != null && error.hint !== "" && (
-        <p className="mt-1 text-xs text-muted-foreground">{error.hint}</p>
-      )}
+      {error.hint != null && error.hint !== "" && <p className="mt-1 text-xs text-muted-foreground">{error.hint}</p>}
       <Button
         type="button"
         variant="outline"

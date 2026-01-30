@@ -83,9 +83,7 @@ export class InventoryPage {
   }
 
   getProductRow(productId: string): Locator {
-    return this.page
-      .locator(`[data-test-id="product-row"][data-product-id="${productId}"]`)
-      .first();
+    return this.page.locator(`[data-test-id="product-row"][data-product-id="${productId}"]`).first();
   }
 
   getProductEditButton(productId: string): Locator {
@@ -141,6 +139,6 @@ export class InventoryPage {
   }
 
   async waitForLoadingFinished() {
-    await this.loadingMessage.waitFor({ state: "hidden" }).catch(() => {});
+    await this.loadingMessage.waitFor({ state: "hidden" }).catch(() => undefined);
   }
 }

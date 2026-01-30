@@ -3,12 +3,7 @@
  * DTOs and commands are derived from database entity definitions where applicable.
  */
 
-import type {
-  Tables,
-  TablesInsert,
-  TablesUpdate,
-  Enums,
-} from "./db/database.types";
+import type { Tables, TablesInsert, TablesUpdate, Enums } from "./db/database.types";
 
 // =============================================================================
 // Auth (login / register view)
@@ -63,31 +58,21 @@ export type ProductDto = Product;
  * user_id and created_at are set server-side; id is generated.
  * Derived from ProductInsert by omitting server-managed fields.
  */
-export type CreateProductCommand = Omit<
-  ProductInsert,
-  "id" | "user_id" | "created_at"
->;
+export type CreateProductCommand = Omit<ProductInsert, "id" | "user_id" | "created_at">;
 
 /**
  * Request body for PATCH /api/products/:id (update product).
  * Partial update; only provided fields are applied. user_id must not be sent.
  * Derived from ProductUpdate by omitting id and user_id.
  */
-export type UpdateProductCommand = Partial<
-  Omit<ProductUpdate, "id" | "user_id">
->;
+export type UpdateProductCommand = Partial<Omit<ProductUpdate, "id" | "user_id">>;
 
 // =============================================================================
 // List products (query and response)
 // =============================================================================
 
 /** Allowed sort fields for GET /api/products. */
-export type ProductSortField =
-  | "name"
-  | "expiration_date"
-  | "created_at"
-  | "quantity"
-  | "category";
+export type ProductSortField = "name" | "expiration_date" | "created_at" | "quantity" | "category";
 
 /** Sort order for list endpoints. */
 export type SortOrder = "asc" | "desc";
@@ -162,10 +147,7 @@ export interface MealPlanDto {
  * Mirrors Product entity fields used by the meal-plan endpoint (no id/user_id/created_at).
  * Kept in sync with Product for consistency.
  */
-export type MealPlanProductInput = Pick<
-  Product,
-  "name" | "quantity" | "unit" | "expiration_date" | "category"
-> & {
+export type MealPlanProductInput = Pick<Product, "name" | "quantity" | "unit" | "expiration_date" | "category"> & {
   /** Optional product id when referencing existing inventory. */
   id?: string;
 };

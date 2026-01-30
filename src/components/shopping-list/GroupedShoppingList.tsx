@@ -42,19 +42,13 @@ function countGroupedItems(grouped: Record<string, ShoppingListItemDto[]>): numb
  * - grouped is missing/empty, or
  * - grouped has keys but no items while items array has data (malformed API).
  */
-export function GroupedShoppingList({
-  shoppingList,
-  "data-test-id": dataTestId,
-}: GroupedShoppingListProps) {
+export function GroupedShoppingList({ shoppingList, "data-test-id": dataTestId }: GroupedShoppingListProps) {
   const rawGrouped = shoppingList.grouped ?? {};
   const items = shoppingList.items ?? [];
   const hasGroupedKeys = Object.keys(rawGrouped).length > 0;
   const groupedItemCount = countGroupedItems(rawGrouped);
-  const useFallback =
-    !hasGroupedKeys || (groupedItemCount === 0 && items.length > 0);
-  const grouped = useFallback
-    ? buildGroupedFromItems(items)
-    : rawGrouped;
+  const useFallback = !hasGroupedKeys || (groupedItemCount === 0 && items.length > 0);
+  const grouped = useFallback ? buildGroupedFromItems(items) : rawGrouped;
   const keys = sortCategoryKeys(Object.keys(grouped));
 
   if (keys.length === 0) return null;

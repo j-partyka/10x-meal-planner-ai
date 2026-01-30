@@ -72,10 +72,7 @@ export class LoginPage {
     if (options?.path !== undefined) {
       await this.page.waitForURL(options.path, { timeout, waitUntil });
     } else {
-      await this.page.waitForURL(
-        (url) => !url.pathname.startsWith("/login"),
-        { timeout, waitUntil }
-      );
+      await this.page.waitForURL((url) => !url.pathname.startsWith("/login"), { timeout, waitUntil });
     }
   }
 

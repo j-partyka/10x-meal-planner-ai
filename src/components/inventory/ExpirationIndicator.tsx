@@ -24,10 +24,7 @@ function getExpirationStatus(expirationDate: string): ExpirationStatus {
   return "normal";
 }
 
-const statusConfig: Record<
-  ExpirationStatus,
-  { label: string; className: string; symbol: string }
-> = {
+const statusConfig: Record<ExpirationStatus, { label: string; className: string; symbol: string }> = {
   expired: {
     label: "Expired",
     className: "text-muted-foreground line-through",
@@ -61,10 +58,7 @@ export function ExpirationIndicator({
   className,
   "data-test-id": dataTestId,
 }: ExpirationIndicatorProps) {
-  const status = useMemo(
-    () => getExpirationStatus(expirationDate),
-    [expirationDate]
-  );
+  const status = useMemo(() => getExpirationStatus(expirationDate), [expirationDate]);
 
   const config = statusConfig[status];
 
@@ -76,9 +70,7 @@ export function ExpirationIndicator({
       data-test-id={dataTestId}
     >
       <span aria-hidden>{config.symbol}</span>
-      {config.label ? (
-        <span className="sr-only sm:not-sr-only">{config.label}</span>
-      ) : null}
+      {config.label ? <span className="sr-only sm:not-sr-only">{config.label}</span> : null}
     </span>
   );
 }

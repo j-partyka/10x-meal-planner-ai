@@ -1,17 +1,12 @@
-import type {
-  MealPlanDto,
-  MealPlanDayDto,
-  MealPlanProductInput,
-  GenerateMealPlanResponse,
-} from '../../types';
+import type { MealPlanDto, MealPlanDayDto, MealPlanProductInput, GenerateMealPlanResponse } from "../../types";
 import {
   MealPlanAiError,
   MealPlanTimeoutError,
   MealPlanRateLimitError,
   MealPlanProviderError,
-} from './meal-plan.errors';
-import type { OpenRouterResponseFormat } from './openrouter.types';
-import type { OpenRouterService } from './openrouter.service';
+} from "./meal-plan.errors";
+import type { OpenRouterResponseFormat } from "./openrouter.types";
+import type { OpenRouterService } from "./openrouter.service";
 import {
   OpenRouterConfigError,
   OpenRouterAuthError,
@@ -20,9 +15,9 @@ import {
   OpenRouterTimeoutError,
   OpenRouterServerError,
   OpenRouterParseError,
-} from './openrouter.errors';
-import { computeShoppingList } from './shopping-list.service';
-import type { InventoryItemForList } from './shopping-list.service';
+} from "./openrouter.errors";
+import { computeShoppingList } from "./shopping-list.service";
+import type { InventoryItemForList } from "./shopping-list.service";
 
 /**
  * Family profile (MVP): hardcoded in API per plan.
@@ -41,19 +36,16 @@ function expirationPriority(expirationDate: string, today: string): string {
   const exp = new Date(expirationDate);
   const t = new Date(today);
   const daysLeft = Math.ceil((exp.getTime() - t.getTime()) / (1000 * 60 * 60 * 24));
-  if (daysLeft <= 3) return ' [USE SOON - within 3 days]';
-  if (daysLeft <= 7) return ' [medium priority - within 7 days]';
-  return '';
+  if (daysLeft <= 3) return " [USE SOON - within 3 days]";
+  if (daysLeft <= 7) return " [medium priority - within 7 days]";
+  return "";
 }
 
 /**
  * Builds the AI prompt with inventory (expiration priority) and family profile.
  * Exported so the API can return the exact prompt that will be sent to the LLM.
  */
-export function getMealPlanPrompt(
-  products: MealPlanProductInput[],
-  startDate: string
-): string {
+export function getMealPlanPrompt(products: MealPlanProductInput[], startDate: string): string {
   return buildPrompt(products, startDate);
 }
 
@@ -61,14 +53,14 @@ function buildPrompt(products: MealPlanProductInput[], startDate: string): strin
   const today = startDate;
   const inventoryLines = products.map((p) => {
     const priority = expirationPriority(p.expiration_date, today);
-    const cat = p.category ? ` (${p.category})` : '';
+    const cat = p.category ? ` (${p.category})` : "";
     return `- ${p.name}: ${p.quantity} ${p.unit}${cat}, expires ${p.expiration_date}${priority}`;
   });
 
   return `You are a meal planner. Generate a 7-day meal plan (breakfast, lunch, dinner each day) based on the following inventory and constraints.
 
 **Inventory (use these first; respect expiration priority):**
-${inventoryLines.join('\n')}
+${inventoryLines.join("\n")}
 
 **Family profile:**${FAMILY_PROFILE}
 
@@ -106,40 +98,40 @@ function extractJson(content: string): unknown {
  * Validates and normalizes AI response into MealPlanDto (ensures 7 days, required fields).
  */
 function parseMealPlanResponse(json: unknown): MealPlanDto {
-  if (!json || typeof json !== 'object' || !('days' in json)) {
-    throw new Error('Invalid meal plan response: missing days');
+  if (!json || typeof json !== "object" || !("days" in json)) {
+    throw new Error("Invalid meal plan response: missing days");
   }
   const days = (json as { days: unknown }).days;
   if (!Array.isArray(days) || days.length < 7) {
-    throw new Error('Invalid meal plan response: expected 7 days');
+    throw new Error("Invalid meal plan response: expected 7 days");
   }
 
   const normalized: MealPlanDayDto[] = days.slice(0, 7).map((day: unknown, i: number) => {
-    if (!day || typeof day !== 'object') {
+    if (!day || typeof day !== "object") {
       throw new Error(`Invalid day ${i}: not an object`);
     }
     const d = day as Record<string, unknown>;
-    const date = typeof d.date === 'string' ? d.date : '';
+    const date = typeof d.date === "string" ? d.date : "";
     const meal = (m: unknown) => {
-      if (!m || typeof m !== 'object') {
-        return { name: '', ingredients: [], instructions: [] };
+      if (!m || typeof m !== "object") {
+        return { name: "", ingredients: [], instructions: [] };
       }
       const x = m as Record<string, unknown>;
       const ingredients = Array.isArray(x.ingredients)
         ? (x.ingredients as unknown[]).map((ing: unknown) => {
-            if (ing && typeof ing === 'object') {
+            if (ing && typeof ing === "object") {
               const i = ing as Record<string, unknown>;
               return {
-                name: typeof i.name === 'string' ? i.name : '',
-                quantity: typeof i.quantity === 'number' ? i.quantity : 0,
-                unit: typeof i.unit === 'string' ? i.unit : '',
+                name: typeof i.name === "string" ? i.name : "",
+                quantity: typeof i.quantity === "number" ? i.quantity : 0,
+                unit: typeof i.unit === "string" ? i.unit : "",
               };
             }
-            return { name: '', quantity: 0, unit: '' };
+            return { name: "", quantity: 0, unit: "" };
           })
         : [];
       return {
-        name: typeof x.name === 'string' ? x.name : '',
+        name: typeof x.name === "string" ? x.name : "",
         ingredients,
         instructions: Array.isArray(x.instructions) ? x.instructions.map(String) : [],
       };
@@ -156,50 +148,50 @@ function parseMealPlanResponse(json: unknown): MealPlanDto {
 }
 
 const mealSchema = {
-  type: 'object' as const,
+  type: "object" as const,
   properties: {
-    name: { type: 'string' as const },
+    name: { type: "string" as const },
     ingredients: {
-      type: 'array' as const,
+      type: "array" as const,
       items: {
-        type: 'object' as const,
+        type: "object" as const,
         properties: {
-          name: { type: 'string' as const },
-          quantity: { type: 'number' as const },
-          unit: { type: 'string' as const },
+          name: { type: "string" as const },
+          quantity: { type: "number" as const },
+          unit: { type: "string" as const },
         },
-        required: ['name', 'quantity', 'unit'] as const,
+        required: ["name", "quantity", "unit"] as const,
       },
     },
-    instructions: { type: 'array' as const, items: { type: 'string' as const } },
+    instructions: { type: "array" as const, items: { type: "string" as const } },
   },
-  required: ['name', 'ingredients', 'instructions'] as const,
+  required: ["name", "ingredients", "instructions"] as const,
 };
 
 /** Meal plan JSON schema for structured output (response_format). */
 const MEAL_PLAN_RESPONSE_FORMAT: OpenRouterResponseFormat = {
-  type: 'json_schema',
+  type: "json_schema",
   json_schema: {
-    name: 'meal_plan',
+    name: "meal_plan",
     strict: true,
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         days: {
-          type: 'array',
+          type: "array",
           items: {
-            type: 'object',
+            type: "object",
             properties: {
-              date: { type: 'string', description: 'YYYY-MM-DD' },
+              date: { type: "string", description: "YYYY-MM-DD" },
               breakfast: mealSchema,
               lunch: mealSchema,
               dinner: mealSchema,
             },
-            required: ['date', 'breakfast', 'lunch', 'dinner'],
+            required: ["date", "breakfast", "lunch", "dinner"],
           },
         },
       },
-      required: ['days'],
+      required: ["days"],
       additionalProperties: false,
     },
   },
@@ -207,7 +199,7 @@ const MEAL_PLAN_RESPONSE_FORMAT: OpenRouterResponseFormat = {
 
 /** Duck-check for OpenRouter-style errors (handles cross-bundle instanceof). */
 function isOpenRouterError(err: unknown): err is { message: string; statusCode?: number; retryAfter?: number } {
-  return err instanceof Error && 'message' in err && typeof (err as { message?: unknown }).message === 'string';
+  return err instanceof Error && "message" in err && typeof (err as { message?: unknown }).message === "string";
 }
 
 /**
@@ -238,22 +230,20 @@ function mapOpenRouterErrorToMealPlan(err: unknown): never {
     const status = err.statusCode === 502 ? 502 : 503;
     throw new MealPlanProviderError(status as 502 | 503, err.message);
   }
-  const message = err instanceof Error ? err.message : 'Meal plan service is temporarily unavailable. Please try again.';
+  const message =
+    err instanceof Error ? err.message : "Meal plan service is temporarily unavailable. Please try again.";
   throw new MealPlanProviderError(503, message);
 }
 
 /**
  * Calls OpenRouter via the provided service. Throws MealPlanAiError on timeout/rate limit/provider errors.
  */
-async function callOpenRouter(
-  prompt: string,
-  openRouter: OpenRouterService
-): Promise<string> {
+async function callOpenRouter(prompt: string, openRouter: OpenRouterService): Promise<string> {
   try {
     const result = await openRouter.chat({
       messages: [
-        { role: 'system', content: 'You are a meal planner. Output only valid JSON matching the requested schema.' },
-        { role: 'user', content: prompt },
+        { role: "system", content: "You are a meal planner. Output only valid JSON matching the requested schema." },
+        { role: "user", content: prompt },
       ],
       maxTokens: 4096,
       temperature: 0.5,

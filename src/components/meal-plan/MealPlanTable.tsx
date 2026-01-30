@@ -1,12 +1,5 @@
 import type { MealPlanDto } from "@/types";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MealCellContent } from "./MealCellContent";
 
 export interface MealPlanTableProps {
@@ -32,30 +25,19 @@ function formatDayHeader(dateStr: string): string {
   }).format(date);
 }
 
-export function MealPlanTable({
-  mealPlan,
-  maxHeight,
-  "data-test-id": dataTestId,
-}: MealPlanTableProps) {
+export function MealPlanTable({ mealPlan, maxHeight, "data-test-id": dataTestId }: MealPlanTableProps) {
   const days = mealPlan.days;
   if (!days.length) return null;
 
   return (
-    <div
-      className="w-full overflow-auto"
-      style={maxHeight ? { maxHeight } : undefined}
-      data-test-id={dataTestId}
-    >
+    <div className="w-full overflow-auto" style={maxHeight ? { maxHeight } : undefined} data-test-id={dataTestId}>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead
-              scope="col"
-              className="min-w-[100px] sticky left-0 z-10 bg-muted/95 text-sm font-medium"
-            >
+            <TableHead scope="col" className="min-w-[100px] sticky left-0 z-10 bg-muted/95 text-sm font-medium">
               <span className="sr-only">Meal</span>
             </TableHead>
-            {days.map((day, colIndex) => (
+            {days.map((day) => (
               <TableHead
                 key={day.date}
                 scope="col"
@@ -76,14 +58,8 @@ export function MealPlanTable({
                 {MEAL_LABELS[mealKey]}
               </TableHead>
               {days.map((day) => (
-                <TableCell
-                  key={day.date}
-                  className="min-w-[180px] min-h-[44px] px-3 py-3 align-top text-sm"
-                >
-                  <MealCellContent
-                    meal={day[mealKey]}
-                    data-test-id="meal-cell-content"
-                  />
+                <TableCell key={day.date} className="min-w-[180px] min-h-[44px] px-3 py-3 align-top text-sm">
+                  <MealCellContent meal={day[mealKey]} data-test-id="meal-cell-content" />
                 </TableCell>
               ))}
             </TableRow>

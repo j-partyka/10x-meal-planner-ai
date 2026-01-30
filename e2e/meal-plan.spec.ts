@@ -8,6 +8,7 @@ test.describe("Meal plan — generate, table, regenerate", () => {
   test.beforeEach(async ({ page }) => {
     const creds = getE2ECredentials();
     test.skip(!creds, "E2E_USERNAME and E2E_PASSWORD must be set in .env.test");
+    if (!creds) return;
 
     const loginPage = new LoginPage(page);
     await loginPage.goto();
@@ -52,9 +53,7 @@ test.describe("Meal plan — generate, table, regenerate", () => {
     await expect(mealPlanPage.mealPlanTable).toBeVisible();
   });
 
-  test.skip("link to shopping list navigates to shopping list page", async ({
-    page,
-  }) => {
+  test.skip("link to shopping list navigates to shopping list page", async ({ page }) => {
     const inventoryPage = new InventoryPage(page);
     await inventoryPage.goto();
     await inventoryPage.waitForLoadingFinished();

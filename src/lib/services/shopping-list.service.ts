@@ -1,8 +1,4 @@
-import type {
-  MealPlanDto,
-  ShoppingListItemDto,
-  ShoppingListDto,
-} from '../../types';
+import type { MealPlanDto, ShoppingListItemDto, ShoppingListDto } from "../../types";
 
 /** Inventory item shape used for computing missing ingredients (name, quantity, unit, optional category). */
 export interface InventoryItemForList {
@@ -12,7 +8,7 @@ export interface InventoryItemForList {
   category?: string | null;
 }
 
-const UNCATEGORIZED_KEY = 'Other';
+const UNCATEGORIZED_KEY = "Other";
 
 const key = (name: string, unit: string) => `${name.toLowerCase().trim()}|${unit}`;
 
@@ -20,9 +16,7 @@ const key = (name: string, unit: string) => `${name.toLowerCase().trim()}|${unit
  * Extracts all ingredients from the meal plan and aggregates quantities by (name, unit).
  * Keeps one display name per key (first occurrence).
  */
-function aggregateNeeded(
-  mealPlan: MealPlanDto
-): Map<string, { quantity: number; unit: string; name: string }> {
+function aggregateNeeded(mealPlan: MealPlanDto): Map<string, { quantity: number; unit: string; name: string }> {
   const map = new Map<string, { quantity: number; unit: string; name: string }>();
 
   for (const day of mealPlan.days) {
@@ -44,9 +38,7 @@ function aggregateNeeded(
 /**
  * Builds a map of (name, unit) -> category from inventory (last seen category for that name/unit).
  */
-function inventoryCategoryMap(
-  inventory: InventoryItemForList[]
-): Map<string, string> {
+function inventoryCategoryMap(inventory: InventoryItemForList[]): Map<string, string> {
   const map = new Map<string, string>();
   for (const item of inventory) {
     const k = key(item.name, item.unit);
@@ -86,10 +78,7 @@ function subtractInventory(
  * Computes the shopping list (missing ingredients) from the meal plan and current inventory.
  * Aggregates quantities by (name, unit), subtracts inventory, groups by category (uncategorized → "Other").
  */
-export function computeShoppingList(
-  mealPlan: MealPlanDto,
-  inventory: InventoryItemForList[]
-): ShoppingListDto {
+export function computeShoppingList(mealPlan: MealPlanDto, inventory: InventoryItemForList[]): ShoppingListDto {
   const needed = aggregateNeeded(mealPlan);
   const categoryMap = inventoryCategoryMap(inventory);
   const remaining = subtractInventory(needed, inventory);

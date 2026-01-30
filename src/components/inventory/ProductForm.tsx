@@ -90,22 +90,14 @@ function hasErrors(errors: Record<string, string | null>): boolean {
   return Object.values(errors).some((e) => e != null);
 }
 
-export function ProductForm({
-  mode,
-  initialValues,
-  onSubmit,
-  onCancel,
-  submitError,
-}: ProductFormProps) {
-  const [values, setValues] = useState<ProductFormValues>(() =>
-    toFormValues(initialValues)
-  );
+export function ProductForm({ mode, initialValues, onSubmit, onCancel, submitError }: ProductFormProps) {
+  const [values, setValues] = useState<ProductFormValues>(() => toFormValues(initialValues));
   const [clientErrors, setClientErrors] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
     setValues(toFormValues(initialValues));
     setClientErrors({});
-  }, [mode, initialValues?.id, initialValues?.name]);
+  }, [mode, initialValues]);
 
   const apiErrors = useCallback(() => {
     const map: Record<string, string> = {};
@@ -123,22 +115,24 @@ export function ProductForm({
   const categoryId = useId();
 
   const handleChange = useCallback(
-    (field: keyof ProductFormValues) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const v = e.target.value;
-        setValues((prev) => ({ ...prev, [field]: v }));
-        setClientErrors((prev) => ({ ...prev, [field]: null }));
-      },
+    (field: keyof ProductFormValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const v = e.target.value;
+      setValues((prev) => ({ ...prev, [field]: v }));
+      setClientErrors((prev) => ({ ...prev, [field]: null }));
+    },
     []
   );
 
-  const handleBlurStable = useCallback((field: keyof ProductFormValues) => () => {
-    setValues((current) => {
-      const errs = validateForm(current);
-      setClientErrors((prev) => ({ ...prev, [field]: errs[field] ?? null }));
-      return current;
-    });
-  }, []);
+  const handleBlurStable = useCallback(
+    (field: keyof ProductFormValues) => () => {
+      setValues((current) => {
+        const errs = validateForm(current);
+        setClientErrors((prev) => ({ ...prev, [field]: errs[field] ?? null }));
+        return current;
+      });
+    },
+    []
+  );
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {

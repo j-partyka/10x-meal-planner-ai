@@ -9,7 +9,7 @@ import type {
   OpenRouterChatOptions,
   OpenRouterChatResult,
   OpenRouterServiceOptions,
-} from './openrouter.types';
+} from "./openrouter.types";
 import {
   OpenRouterAuthError,
   OpenRouterClientError,
@@ -18,10 +18,10 @@ import {
   OpenRouterRateLimitError,
   OpenRouterServerError,
   OpenRouterTimeoutError,
-} from './openrouter.errors';
-import { OPENROUTER_DEFAULT_MODEL } from './openrouter.config';
+} from "./openrouter.errors";
+import { OPENROUTER_DEFAULT_MODEL } from "./openrouter.config";
 
-const DEFAULT_BASE_URL = 'https://openrouter.ai/api/v1';
+const DEFAULT_BASE_URL = "https://openrouter.ai/api/v1";
 const DEFAULT_MODEL = OPENROUTER_DEFAULT_MODEL;
 const DEFAULT_TIMEOUT_MS = 60_000;
 
@@ -71,11 +71,7 @@ function buildRequestBody(opts: OpenRouterBuildBodyOptions): Record<string, unkn
 /**
  * Fetches with AbortController and timeout. On timeout, aborts and throws OpenRouterTimeoutError.
  */
-async function fetchWithTimeout(
-  url: string,
-  requestInit: RequestInit,
-  timeoutMsParam: number
-): Promise<Response> {
+async function fetchWithTimeout(url: string, requestInit: RequestInit, timeoutMsParam: number): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMsParam);
 
@@ -86,10 +82,8 @@ async function fetchWithTimeout(
     });
     return response;
   } catch (err) {
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new OpenRouterTimeoutError(
-        `OpenRouter request timed out after ${timeoutMsParam}ms.`
-      );
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new OpenRouterTimeoutError(`OpenRouter request timed out after ${timeoutMsParam}ms.`);
     }
     throw err;
   } finally {
@@ -111,11 +105,7 @@ function parseRetryAfterHeader(header: string | null): number | undefined {
 }
 
 /** Maps HTTP status and optional body to typed OpenRouter errors (Step 4). */
-function mapError(
-  status: number,
-  body?: unknown,
-  retryAfterFromHeader?: number
-): never {
+function mapError(status: number, body?: unknown, retryAfterFromHeader?: number): never {
   const errorBody = body as { error?: { message?: string }; retry_after?: number } | undefined;
   const message = errorBody?.error?.message ?? `OpenRouter API error: ${status}`;
 
@@ -143,25 +133,21 @@ async function handleResponse(response: Response): Promise<OpenRouterChatResult>
   if (!response.ok) {
     const bodyUnknown = await response.json().catch(() => ({}));
     const msg = (bodyUnknown as { error?: { message?: string } })?.error?.message;
-    console.error(
-      `[OpenRouter] ${response.status} ${response.statusText}${msg ? `: ${msg}` : ''}`
-    );
-    const retryAfter =
-      response.status === 429
-        ? parseRetryAfterHeader(response.headers.get('Retry-After'))
-        : undefined;
+    // eslint-disable-next-line no-console -- server-side error logging
+    console.error(`[OpenRouter] ${response.status} ${response.statusText}${msg ? `: ${msg}` : ""}`);
+    const retryAfter = response.status === 429 ? parseRetryAfterHeader(response.headers.get("Retry-After")) : undefined;
     mapError(response.status, bodyUnknown, retryAfter);
   }
   const data = (await response.json()) as {
-    choices?: Array<{ message?: { content?: unknown } }>;
+    choices?: { message?: { content?: unknown } }[];
     usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
   };
   const content = data?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string') {
+  if (typeof content !== "string") {
     throw new OpenRouterParseError(
       data?.choices?.length
-        ? 'Assistant message content was missing or not a string.'
-        : 'OpenRouter response was invalid or empty.'
+        ? "Assistant message content was missing or not a string."
+        : "OpenRouter response was invalid or empty."
     );
   }
   return { content, usage: data.usage };
@@ -178,7 +164,7 @@ export function createOpenRouterService(options: OpenRouterServiceOptions): Open
   return {
     async chat(chatOptions: OpenRouterChatOptions): Promise<OpenRouterChatResult> {
       const apiKey = options.apiKey;
-      if (!apiKey || apiKey.trim() === '') {
+      if (!apiKey || apiKey.trim() === "") {
         throw new OpenRouterConfigError();
       }
       const body = buildRequestBody({
@@ -187,9 +173,9 @@ export function createOpenRouterService(options: OpenRouterServiceOptions): Open
       });
       const url = `${baseUrl}/chat/completions`;
       const init: RequestInit = {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(body),

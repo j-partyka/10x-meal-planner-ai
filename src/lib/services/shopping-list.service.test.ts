@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computeShoppingList,
-  type InventoryItemForList,
-} from "./shopping-list.service";
+import { computeShoppingList, type InventoryItemForList } from "./shopping-list.service";
 import type { MealPlanDto } from "../../types";
 
 /** Builds one day with ingredients only in breakfast (so totals are not tripled). */
@@ -27,10 +24,7 @@ describe("shopping-list.service", () => {
   describe("computeShoppingList", () => {
     it("returns empty items and grouped when meal plan has no ingredients", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01"),
-          minimalDay("2025-02-02"),
-        ],
+        days: [minimalDay("2025-02-01"), minimalDay("2025-02-02")],
       };
       const inventory: InventoryItemForList[] = [];
 
@@ -47,9 +41,7 @@ describe("shopping-list.service", () => {
             { name: "Milk", quantity: 1, unit: "L" },
             { name: "Milk", quantity: 0.5, unit: "L" },
           ]),
-          minimalDay("2025-02-02", [
-            { name: "Milk", quantity: 0.5, unit: "L" },
-          ]),
+          minimalDay("2025-02-02", [{ name: "Milk", quantity: 0.5, unit: "L" }]),
         ],
       };
       const inventory: InventoryItemForList[] = [];
@@ -68,12 +60,8 @@ describe("shopping-list.service", () => {
     it("uses first occurrence display name when aggregating (trimmed)", () => {
       const mealPlan: MealPlanDto = {
         days: [
-          minimalDay("2025-02-01", [
-            { name: "  Flour  ", quantity: 500, unit: "g" },
-          ]),
-          minimalDay("2025-02-02", [
-            { name: "flour", quantity: 300, unit: "g" },
-          ]),
+          minimalDay("2025-02-01", [{ name: "  Flour  ", quantity: 500, unit: "g" }]),
+          minimalDay("2025-02-02", [{ name: "flour", quantity: 300, unit: "g" }]),
         ],
       };
       const inventory: InventoryItemForList[] = [];
@@ -86,15 +74,9 @@ describe("shopping-list.service", () => {
 
     it("subtracts inventory from needed (same name and unit)", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "Eggs", quantity: 6, unit: "pieces" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "Eggs", quantity: 6, unit: "pieces" }])],
       };
-      const inventory: InventoryItemForList[] = [
-        { name: "Eggs", quantity: 4, unit: "pieces" },
-      ];
+      const inventory: InventoryItemForList[] = [{ name: "Eggs", quantity: 4, unit: "pieces" }];
 
       const result = computeShoppingList(mealPlan, inventory);
 
@@ -108,15 +90,9 @@ describe("shopping-list.service", () => {
 
     it("subtracts when name/unit match after normalizing (lowercase trim)", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "Milk", quantity: 1, unit: "L" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "Milk", quantity: 1, unit: "L" }])],
       };
-      const inventory: InventoryItemForList[] = [
-        { name: "  milk  ", quantity: 1, unit: "L" },
-      ];
+      const inventory: InventoryItemForList[] = [{ name: "  milk  ", quantity: 1, unit: "L" }];
 
       const result = computeShoppingList(mealPlan, inventory);
 
@@ -125,15 +101,9 @@ describe("shopping-list.service", () => {
 
     it("does not subtract when unit differs (key includes unit)", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "Milk", quantity: 1, unit: "L" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "Milk", quantity: 1, unit: "L" }])],
       };
-      const inventory: InventoryItemForList[] = [
-        { name: "Milk", quantity: 1, unit: "ml" },
-      ];
+      const inventory: InventoryItemForList[] = [{ name: "Milk", quantity: 1, unit: "ml" }];
 
       const result = computeShoppingList(mealPlan, inventory);
 
@@ -143,15 +113,9 @@ describe("shopping-list.service", () => {
 
     it("omits ingredient when inventory fully covers need", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "Butter", quantity: 200, unit: "g" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "Butter", quantity: 200, unit: "g" }])],
       };
-      const inventory: InventoryItemForList[] = [
-        { name: "Butter", quantity: 200, unit: "g" },
-      ];
+      const inventory: InventoryItemForList[] = [{ name: "Butter", quantity: 200, unit: "g" }];
 
       const result = computeShoppingList(mealPlan, inventory);
 
@@ -161,15 +125,9 @@ describe("shopping-list.service", () => {
 
     it("assigns category from inventory when same (name, unit) exists", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "Yogurt", quantity: 2, unit: "pieces" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "Yogurt", quantity: 2, unit: "pieces" }])],
       };
-      const inventory: InventoryItemForList[] = [
-        { name: "Yogurt", quantity: 0, unit: "pieces", category: "Dairy" },
-      ];
+      const inventory: InventoryItemForList[] = [{ name: "Yogurt", quantity: 0, unit: "pieces", category: "Dairy" }];
 
       const result = computeShoppingList(mealPlan, inventory);
 
@@ -179,11 +137,7 @@ describe("shopping-list.service", () => {
 
     it("assigns 'Other' when no inventory category for (name, unit)", () => {
       const mealPlan: MealPlanDto = {
-        days: [
-          minimalDay("2025-02-01", [
-            { name: "NewItem", quantity: 1, unit: "kg" },
-          ]),
-        ],
+        days: [minimalDay("2025-02-01", [{ name: "NewItem", quantity: 1, unit: "kg" }])],
       };
       const inventory: InventoryItemForList[] = [];
 

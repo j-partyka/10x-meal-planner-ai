@@ -16,10 +16,7 @@ export interface AuthFetchOptions extends RequestInit {
  * Fetches with Authorization: Bearer <session.access_token>.
  * On 401, redirects to /login?redirect=<redirectPath>.
  */
-export async function authFetch(
-  input: RequestInfo | URL,
-  options: AuthFetchOptions = {}
-): Promise<Response> {
+export async function authFetch(input: RequestInfo | URL, options: AuthFetchOptions = {}): Promise<Response> {
   const { redirectPath = typeof window !== "undefined" ? window.location.pathname : "/", ...init } = options;
 
   const {

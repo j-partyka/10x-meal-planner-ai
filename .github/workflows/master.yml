@@ -1,0 +1,23 @@
+# Minimal CI: runs on push to master and manually (workflow_dispatch).
+# Verifies lint, unit tests, and production build. Uses ci-setup (Node from .nvmrc, npm ci).
+# No env from .env.example required for this job; add job-level env: when needed.
+name: Master
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+jobs:
+  ci:
+    name: Lint, test & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/ci-setup
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm run test
+      - name: Production build
+        env:
+          NODE_ENV: production
+        run: npm run build

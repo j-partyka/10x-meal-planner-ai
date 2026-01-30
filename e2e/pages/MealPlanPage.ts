@@ -71,6 +71,6 @@ export class MealPlanPage {
   }
 
   async waitForLoadingFinished() {
-    await this.loadingState.waitFor({ state: "hidden" }).catch(() => {});
+    await this.loadingState.waitFor({ state: "hidden" }).catch(() => undefined);
   }
 }

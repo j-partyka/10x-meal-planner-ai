@@ -8,7 +8,7 @@ export function jsonResponse<T>(body: T, status: number, init?: ResponseInit): R
     ...init,
     status,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...init?.headers,
     },
   });

@@ -4,17 +4,17 @@
  * API key is read at runtime (process.env then import.meta.env) so it works in dev and production.
  */
 
-import { OPENROUTER_DEFAULT_MODEL } from './openrouter.config';
-import { createOpenRouterService } from './openrouter.service';
+import { OPENROUTER_DEFAULT_MODEL } from "./openrouter.config";
+import { createOpenRouterService } from "./openrouter.service";
 
 /** Read at request time so API routes can create a fresh service per request (Option B). */
 export function getOpenRouterApiKey(): string | undefined {
-  if (typeof process !== 'undefined' && process.env?.OPENROUTER_API_KEY) {
+  if (typeof process !== "undefined" && process.env?.OPENROUTER_API_KEY) {
     const key = process.env.OPENROUTER_API_KEY.trim();
     if (key) return key;
   }
   const key = import.meta.env.OPENROUTER_API_KEY;
-  return typeof key === 'string' && key.trim() ? key.trim() : undefined;
+  return typeof key === "string" && key.trim() ? key.trim() : undefined;
 }
 
 /** Use in API routes to return a clear 503 when the key is missing. */
@@ -34,14 +34,14 @@ export const openRouter = createOpenRouterService({
   timeoutMs: 60_000,
 });
 
-export { createOpenRouterService } from './openrouter.service';
-export type { OpenRouterService } from './openrouter.service';
+export { createOpenRouterService } from "./openrouter.service";
+export type { OpenRouterService } from "./openrouter.service";
 export type {
   OpenRouterMessage,
   OpenRouterResponseFormat,
   OpenRouterChatOptions,
   OpenRouterChatResult,
-} from './openrouter.types';
+} from "./openrouter.types";
 export {
   OpenRouterError,
   OpenRouterConfigError,
@@ -51,4 +51,4 @@ export {
   OpenRouterTimeoutError,
   OpenRouterServerError,
   OpenRouterParseError,
-} from './openrouter.errors';
+} from "./openrouter.errors";

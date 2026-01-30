@@ -77,9 +77,7 @@ export function CreateAccountForm({
           minLength={MIN_PASSWORD_LENGTH}
           data-test-id="register-password"
         />
-        <p className="text-xs text-muted-foreground">
-          At least {MIN_PASSWORD_LENGTH} characters
-        </p>
+        <p className="text-xs text-muted-foreground">At least {MIN_PASSWORD_LENGTH} characters</p>
       </div>
       <div className="grid gap-2">
         <Label htmlFor="register-confirm">Confirm password</Label>

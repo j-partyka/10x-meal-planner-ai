@@ -1,9 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 
-import {
-  createSupabaseServerClient,
-  parseCookieHeader,
-} from "../db/supabase.server";
+import { createSupabaseServerClient, parseCookieHeader } from "../db/supabase.server";
 import { createAuthenticatedClient, supabaseClient } from "../db/supabase.client";
 import { AUTH_REDIRECT_ROUTES, isAllowedRedirect } from "../types";
 
@@ -11,9 +8,7 @@ const PROTECTED_API_PREFIXES = ["/api/products", "/api/meal-plan", "/api/shoppin
 const LOGIN_PATH = "/login";
 
 function isProtectedApiPath(pathname: string): boolean {
-  return PROTECTED_API_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
-  );
+  return PROTECTED_API_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/"));
 }
 
 function isProtectedPagePath(pathname: string): boolean {
@@ -76,7 +71,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     },
   });
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (pathname === LOGIN_PATH) {
     if (session) {

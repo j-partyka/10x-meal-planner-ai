@@ -1,16 +1,7 @@
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { supabaseBrowser } from "@/db/supabase.browser";
 import { mapSignInError, mapSignUpError } from "@/lib/auth-errors";
-import {
-  getRegisterValidationError,
-  getSignInValidationError,
-} from "@/lib/auth-validation";
+import { getRegisterValidationError, getSignInValidationError } from "@/lib/auth-validation";
 import type { AuthMode } from "@/types";
 import { isAllowedRedirect } from "@/types";
 import { CreateAccountForm } from "./CreateAccountForm";
@@ -79,11 +70,7 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
   const handleRegister = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      const validationError = getRegisterValidationError(
-        email,
-        password,
-        confirmPassword
-      );
+      const validationError = getRegisterValidationError(email, password, confirmPassword);
       if (validationError) {
         setErrorMessage(validationError);
         return;
@@ -112,9 +99,7 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
   return (
     <div className="w-full max-w-sm space-y-6" data-test-id="auth-form-container">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {mode === "signin" ? "Sign in" : "Create account"}
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{mode === "signin" ? "Sign in" : "Create account"}</h1>
         <p className="text-sm text-muted-foreground">
           {mode === "signin"
             ? "Enter your credentials to access your meal planner."
@@ -122,11 +107,7 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
         </p>
       </div>
 
-      <ModeSwitcher
-        value={mode}
-        onValueChange={handleModeChange}
-        data-test-id="auth-mode-switcher"
-      />
+      <ModeSwitcher value={mode} onValueChange={handleModeChange} data-test-id="auth-mode-switcher" />
 
       {mode === "signin" ? (
         <SignInForm

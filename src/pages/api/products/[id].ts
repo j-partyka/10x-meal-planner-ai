@@ -1,13 +1,9 @@
-import type { APIRoute } from 'astro';
+import type { APIRoute } from "astro";
 
-import { errorResponse, jsonResponse } from '../../../lib/api-responses';
-import { logServerError, logValidationFailure } from '../../../lib/api-logger';
-import { uuidParamSchema, updateProductSchema } from '../../../lib/schemas';
-import {
-  getProductById,
-  updateProduct,
-  deleteProduct,
-} from '../../../lib/services/product.service';
+import { errorResponse, jsonResponse } from "../../../lib/api-responses";
+import { logServerError, logValidationFailure } from "../../../lib/api-logger";
+import { uuidParamSchema, updateProductSchema } from "../../../lib/schemas";
+import { getProductById, updateProduct, deleteProduct } from "../../../lib/services/product.service";
 
 export const prerender = false;
 
@@ -17,23 +13,23 @@ export const prerender = false;
 export const GET: APIRoute = async ({ locals, params }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   const parsed = uuidParamSchema.safeParse(params);
   if (!parsed.success) {
-    return errorResponse('Invalid product id', 400);
+    return errorResponse("Invalid product id", 400);
   }
 
   try {
     const product = await getProductById(locals.supabase, userId, parsed.data.id);
     if (!product) {
-      return errorResponse('Not found', 404);
+      return errorResponse("Not found", 404);
     }
     return jsonResponse(product, 200);
   } catch (err) {
-    logServerError('GET /api/products/:id', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("GET /api/products/:id", err);
+    return errorResponse("Internal server error", 500);
   }
 };
 
@@ -43,19 +39,19 @@ export const GET: APIRoute = async ({ locals, params }) => {
 export const PATCH: APIRoute = async ({ locals, params, request }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   const idParsed = uuidParamSchema.safeParse(params);
   if (!idParsed.success) {
-    return errorResponse('Invalid product id', 400);
+    return errorResponse("Invalid product id", 400);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return errorResponse('Invalid JSON body', 400);
+    return errorResponse("Invalid JSON body", 400);
   }
 
   const bodyParsed = updateProductSchema.safeParse(body);
@@ -64,24 +60,19 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
     const detailsList = Object.entries(details).flatMap(([field, messages]) =>
       (messages ?? []).map((message) => ({ field, message }))
     );
-    logValidationFailure('PATCH /api/products/:id', detailsList);
-    return errorResponse('Validation failed', 400, detailsList);
+    logValidationFailure("PATCH /api/products/:id", detailsList);
+    return errorResponse("Validation failed", 400, detailsList);
   }
 
   try {
-    const product = await updateProduct(
-      locals.supabase,
-      userId,
-      idParsed.data.id,
-      bodyParsed.data
-    );
+    const product = await updateProduct(locals.supabase, userId, idParsed.data.id, bodyParsed.data);
     if (!product) {
-      return errorResponse('Not found', 404);
+      return errorResponse("Not found", 404);
     }
     return jsonResponse(product, 200);
   } catch (err) {
-    logServerError('PATCH /api/products/:id', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("PATCH /api/products/:id", err);
+    return errorResponse("Internal server error", 500);
   }
 };
 
@@ -91,22 +82,22 @@ export const PATCH: APIRoute = async ({ locals, params, request }) => {
 export const DELETE: APIRoute = async ({ locals, params }) => {
   const userId = locals.userId;
   if (!userId) {
-    return errorResponse('Unauthorized', 401);
+    return errorResponse("Unauthorized", 401);
   }
 
   const parsed = uuidParamSchema.safeParse(params);
   if (!parsed.success) {
-    return errorResponse('Invalid product id', 400);
+    return errorResponse("Invalid product id", 400);
   }
 
   try {
     const deleted = await deleteProduct(locals.supabase, userId, parsed.data.id);
     if (!deleted) {
-      return errorResponse('Not found', 404);
+      return errorResponse("Not found", 404);
     }
     return new Response(null, { status: 204 });
   } catch (err) {
-    logServerError('DELETE /api/products/:id', err);
-    return errorResponse('Internal server error', 500);
+    logServerError("DELETE /api/products/:id", err);
+    return errorResponse("Internal server error", 500);
   }
 };

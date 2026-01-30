@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  isValidEmail,
-  isValidPassword,
-  getSignInValidationError,
-  getRegisterValidationError,
-} from "./auth-validation";
+import { isValidEmail, isValidPassword, getSignInValidationError, getRegisterValidationError } from "./auth-validation";
 
 describe("auth-validation", () => {
   describe("isValidEmail", () => {
@@ -78,12 +73,8 @@ describe("auth-validation", () => {
     });
 
     it("returns 'Please enter a valid email address.' when email format is invalid", () => {
-      expect(getSignInValidationError("invalid", "password1")).toBe(
-        "Please enter a valid email address."
-      );
-      expect(getSignInValidationError("user@", "password1")).toBe(
-        "Please enter a valid email address."
-      );
+      expect(getSignInValidationError("invalid", "password1")).toBe("Please enter a valid email address.");
+      expect(getSignInValidationError("user@", "password1")).toBe("Please enter a valid email address.");
     });
 
     it("returns 'Password is required.' when password is empty", () => {
@@ -97,62 +88,46 @@ describe("auth-validation", () => {
 
   describe("getRegisterValidationError", () => {
     it("returns null when all fields are valid and passwords match", () => {
-      const result = getRegisterValidationError(
-        "user@example.com",
-        "password1",
-        "password1"
-      );
+      const result = getRegisterValidationError("user@example.com", "password1", "password1");
       expect(result).toBeNull();
     });
 
     it("returns 'Email is required.' when email is empty", () => {
-      expect(
-        getRegisterValidationError("", "password1", "password1")
-      ).toBe("Email is required.");
+      expect(getRegisterValidationError("", "password1", "password1")).toBe("Email is required.");
     });
 
     it("returns 'Please enter a valid email address.' when email format is invalid", () => {
-      expect(
-        getRegisterValidationError("invalid", "password1", "password1")
-      ).toBe("Please enter a valid email address.");
+      expect(getRegisterValidationError("invalid", "password1", "password1")).toBe(
+        "Please enter a valid email address."
+      );
     });
 
     it("returns 'Password is required.' when password is empty", () => {
-      expect(
-        getRegisterValidationError("user@example.com", "", "")
-      ).toBe("Password is required.");
+      expect(getRegisterValidationError("user@example.com", "", "")).toBe("Password is required.");
     });
 
     it("returns password length message when password has less than 8 characters", () => {
-      expect(
-        getRegisterValidationError("user@example.com", "short", "short")
-      ).toBe("Password should be at least 8 characters.");
+      expect(getRegisterValidationError("user@example.com", "short", "short")).toBe(
+        "Password should be at least 8 characters."
+      );
     });
 
     it("returns password length message for exactly 7 characters (boundary)", () => {
-      expect(
-        getRegisterValidationError("user@example.com", "1234567", "1234567")
-      ).toBe("Password should be at least 8 characters.");
+      expect(getRegisterValidationError("user@example.com", "1234567", "1234567")).toBe(
+        "Password should be at least 8 characters."
+      );
     });
 
     it("returns 'Passwords do not match.' when password and confirmPassword differ", () => {
-      expect(
-        getRegisterValidationError("user@example.com", "password1", "password2")
-      ).toBe("Passwords do not match.");
+      expect(getRegisterValidationError("user@example.com", "password1", "password2")).toBe("Passwords do not match.");
     });
 
     it("checks in order: email → email format → password required → length → match", () => {
       expect(getRegisterValidationError("", "short", "short")).toBe("Email is required.");
-      expect(getRegisterValidationError("bad", "short", "short")).toBe(
-        "Please enter a valid email address."
-      );
+      expect(getRegisterValidationError("bad", "short", "short")).toBe("Please enter a valid email address.");
       expect(getRegisterValidationError("a@b.co", "", "")).toBe("Password is required.");
-      expect(getRegisterValidationError("a@b.co", "short", "short")).toBe(
-        "Password should be at least 8 characters."
-      );
-      expect(getRegisterValidationError("a@b.co", "password1", "other")).toBe(
-        "Passwords do not match."
-      );
+      expect(getRegisterValidationError("a@b.co", "short", "short")).toBe("Password should be at least 8 characters.");
+      expect(getRegisterValidationError("a@b.co", "password1", "other")).toBe("Passwords do not match.");
     });
   });
 });

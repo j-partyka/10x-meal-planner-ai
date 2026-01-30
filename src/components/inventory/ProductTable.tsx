@@ -1,13 +1,6 @@
 import { useCallback } from "react";
 import type { ProductDto } from "@/types";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ExpirationIndicator } from "./ExpirationIndicator";
 import { cn } from "@/lib/utils";
@@ -38,24 +31,13 @@ export function ProductTable({
   onDelete,
   "aria-label": ariaLabel = "Product list",
 }: ProductTableProps) {
-  const handleEdit = useCallback(
-    (product: ProductDto) => () => onEdit(product),
-    [onEdit]
-  );
-  const handleDelete = useCallback(
-    (product: ProductDto) => () => onDelete(product),
-    [onDelete]
-  );
+  const handleEdit = useCallback((product: ProductDto) => () => onEdit(product), [onEdit]);
+  const handleDelete = useCallback((product: ProductDto) => () => onDelete(product), [onDelete]);
 
   return (
     <>
       {/* Table: visible from md up */}
-      <div
-        className="hidden md:block"
-        role="region"
-        aria-label={ariaLabel}
-        data-test-id="inventory-product-table"
-      >
+      <div className="hidden md:block" role="region" aria-label={ariaLabel} data-test-id="inventory-product-table">
         <Table>
           <TableHeader>
             <TableRow>
@@ -79,14 +61,10 @@ export function ProductTable({
                       expirationDate={product.expiration_date}
                       data-test-id="product-expiration-indicator"
                     />
-                    <span className="text-muted-foreground">
-                      {formatExpirationDate(product.expiration_date)}
-                    </span>
+                    <span className="text-muted-foreground">{formatExpirationDate(product.expiration_date)}</span>
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {product.category ?? "—"}
-                </TableCell>
+                <TableCell className="text-muted-foreground">{product.category ?? "—"}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button
@@ -118,19 +96,11 @@ export function ProductTable({
       </div>
 
       {/* Card list: visible on small screens */}
-      <ul
-        className="flex flex-col gap-3 md:hidden"
-        aria-label={ariaLabel}
-        role="list"
-        data-test-id="inventory-product-table"
-      >
+      <ul className="flex flex-col gap-3 md:hidden" aria-label={ariaLabel} data-test-id="inventory-product-table">
         {products.map((product) => (
           <li
             key={product.id}
-            className={cn(
-              "rounded-lg border border-border bg-card p-4 shadow-sm",
-              "flex flex-col gap-2"
-            )}
+            className={cn("rounded-lg border border-border bg-card p-4 shadow-sm", "flex flex-col gap-2")}
             data-test-id="product-row"
             data-product-id={product.id}
           >
@@ -145,9 +115,7 @@ export function ProductTable({
               <span>
                 {product.quantity} {product.unit}
               </span>
-              {product.category ? (
-                <span>{product.category}</span>
-              ) : null}
+              {product.category ? <span>{product.category}</span> : null}
             </div>
             <div className="flex gap-2 pt-2">
               <Button

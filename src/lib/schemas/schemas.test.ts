@@ -53,15 +53,11 @@ describe("schemas", () => {
     });
 
     it("rejects invalid sort field", () => {
-      expect(
-        listProductsQuerySchema.safeParse({ sort: "invalid" }).success
-      ).toBe(false);
+      expect(listProductsQuerySchema.safeParse({ sort: "invalid" }).success).toBe(false);
     });
 
     it("rejects limit above 100", () => {
-      expect(
-        listProductsQuerySchema.safeParse({ limit: 101 }).success
-      ).toBe(false);
+      expect(listProductsQuerySchema.safeParse({ limit: 101 }).success).toBe(false);
     });
 
     it("accepts limit 1 and 100 (boundaries)", () => {
@@ -96,14 +92,13 @@ describe("schemas", () => {
     });
 
     it("accepts without category", () => {
-      const { category: _, ...rest } = validCreate;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- omit category for test
+      const { category: _category, ...rest } = validCreate;
       expect(createProductSchema.safeParse(rest).success).toBe(true);
     });
 
     it("rejects empty name", () => {
-      expect(
-        createProductSchema.safeParse({ ...validCreate, name: "" }).success
-      ).toBe(false);
+      expect(createProductSchema.safeParse({ ...validCreate, name: "" }).success).toBe(false);
     });
 
     it("rejects name longer than 200", () => {
@@ -116,31 +111,21 @@ describe("schemas", () => {
     });
 
     it("rejects quantity zero or negative", () => {
-      expect(
-        createProductSchema.safeParse({ ...validCreate, quantity: 0 }).success
-      ).toBe(false);
-      expect(
-        createProductSchema.safeParse({ ...validCreate, quantity: -1 }).success
-      ).toBe(false);
+      expect(createProductSchema.safeParse({ ...validCreate, quantity: 0 }).success).toBe(false);
+      expect(createProductSchema.safeParse({ ...validCreate, quantity: -1 }).success).toBe(false);
     });
 
     it("accepts quantity with decimals (multipleOf 0.001)", () => {
-      expect(
-        createProductSchema.safeParse({ ...validCreate, quantity: 0.5 }).success
-      ).toBe(true);
+      expect(createProductSchema.safeParse({ ...validCreate, quantity: 0.5 }).success).toBe(true);
     });
 
     it("rejects invalid unit", () => {
-      expect(
-        createProductSchema.safeParse({ ...validCreate, unit: "invalid" }).success
-      ).toBe(false);
+      expect(createProductSchema.safeParse({ ...validCreate, unit: "invalid" }).success).toBe(false);
     });
 
     it("accepts all valid units", () => {
       for (const unit of ["kg", "g", "ml", "L", "pieces"]) {
-        expect(
-          createProductSchema.safeParse({ ...validCreate, unit }).success
-        ).toBe(true);
+        expect(createProductSchema.safeParse({ ...validCreate, unit }).success).toBe(true);
       }
     });
 
@@ -169,9 +154,7 @@ describe("schemas", () => {
     });
 
     it("rejects extra properties (strict)", () => {
-      expect(
-        createProductSchema.safeParse({ ...validCreate, user_id: "x" }).success
-      ).toBe(false);
+      expect(createProductSchema.safeParse({ ...validCreate, user_id: "x" }).success).toBe(false);
     });
   });
 
@@ -181,9 +164,7 @@ describe("schemas", () => {
     });
 
     it("accepts partial fields", () => {
-      expect(
-        updateProductSchema.safeParse({ name: "New Name" }).success
-      ).toBe(true);
+      expect(updateProductSchema.safeParse({ name: "New Name" }).success).toBe(true);
       expect(
         updateProductSchema.safeParse({
           quantity: 2,
@@ -193,21 +174,15 @@ describe("schemas", () => {
     });
 
     it("accepts category null", () => {
-      expect(
-        updateProductSchema.safeParse({ category: null }).success
-      ).toBe(true);
+      expect(updateProductSchema.safeParse({ category: null }).success).toBe(true);
     });
 
     it("rejects name empty string", () => {
-      expect(
-        updateProductSchema.safeParse({ name: "" }).success
-      ).toBe(false);
+      expect(updateProductSchema.safeParse({ name: "" }).success).toBe(false);
     });
 
     it("rejects quantity zero", () => {
-      expect(
-        updateProductSchema.safeParse({ quantity: 0 }).success
-      ).toBe(false);
+      expect(updateProductSchema.safeParse({ quantity: 0 }).success).toBe(false);
     });
   });
 
@@ -280,10 +255,7 @@ describe("schemas", () => {
     };
 
     it("accepts valid meal plan", () => {
-      expect(
-        computeShoppingListCommandSchema.safeParse({ mealPlan: minimalMealPlan })
-          .success
-      ).toBe(true);
+      expect(computeShoppingListCommandSchema.safeParse({ mealPlan: minimalMealPlan }).success).toBe(true);
     });
 
     it("rejects missing mealPlan", () => {

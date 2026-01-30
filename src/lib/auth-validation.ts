@@ -13,21 +13,14 @@ export function isValidPassword(value: string): boolean {
   return value.length >= MIN_PASSWORD_LENGTH;
 }
 
-export function getSignInValidationError(
-  email: string,
-  password: string
-): string | null {
+export function getSignInValidationError(email: string, password: string): string | null {
   if (!email.trim()) return "Email is required.";
   if (!isValidEmail(email)) return "Please enter a valid email address.";
   if (!password) return "Password is required.";
   return null;
 }
 
-export function getRegisterValidationError(
-  email: string,
-  password: string,
-  confirmPassword: string
-): string | null {
+export function getRegisterValidationError(email: string, password: string, confirmPassword: string): string | null {
   if (!email.trim()) return "Email is required.";
   if (!isValidEmail(email)) return "Please enter a valid email address.";
   if (!password) return "Password is required.";

@@ -9,7 +9,7 @@ export class OpenRouterError extends Error {
 
   constructor(message: string, statusCode?: number) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
     this.statusCode = statusCode;
     Object.setPrototypeOf(this, OpenRouterError.prototype);
   }
@@ -17,9 +17,9 @@ export class OpenRouterError extends Error {
 
 /** Missing API key (scenario 1); status not applicable or 503 for "service misconfigured". */
 export class OpenRouterConfigError extends OpenRouterError {
-  constructor(message: string = 'OpenRouter service is misconfigured: API key is missing.') {
+  constructor(message = "OpenRouter service is misconfigured: API key is missing.") {
     super(message, 503);
-    this.name = 'OpenRouterConfigError';
+    this.name = "OpenRouterConfigError";
     Object.setPrototypeOf(this, OpenRouterConfigError.prototype);
   }
 }
@@ -32,16 +32,16 @@ export class OpenRouterClientError extends OpenRouterError {
     public readonly body?: unknown
   ) {
     super(message, statusCode);
-    this.name = 'OpenRouterClientError';
+    this.name = "OpenRouterClientError";
     Object.setPrototypeOf(this, OpenRouterClientError.prototype);
   }
 }
 
 /** 401 invalid or disabled API key. */
 export class OpenRouterAuthError extends OpenRouterError {
-  constructor(message: string = 'OpenRouter API key is invalid or disabled.') {
+  constructor(message = "OpenRouter API key is invalid or disabled.") {
     super(message, 401);
-    this.name = 'OpenRouterAuthError';
+    this.name = "OpenRouterAuthError";
     Object.setPrototypeOf(this, OpenRouterAuthError.prototype);
   }
 }
@@ -49,20 +49,20 @@ export class OpenRouterAuthError extends OpenRouterError {
 /** 429 too many requests; optional retryAfter if present. */
 export class OpenRouterRateLimitError extends OpenRouterError {
   constructor(
-    message: string = 'OpenRouter rate limit exceeded.',
+    message = "OpenRouter rate limit exceeded.",
     public readonly retryAfter?: number
   ) {
     super(message, 429);
-    this.name = 'OpenRouterRateLimitError';
+    this.name = "OpenRouterRateLimitError";
     Object.setPrototypeOf(this, OpenRouterRateLimitError.prototype);
   }
 }
 
 /** Client timeout or 408. */
 export class OpenRouterTimeoutError extends OpenRouterError {
-  constructor(message: string = 'OpenRouter request timed out.') {
+  constructor(message = "OpenRouter request timed out.") {
     super(message, 408);
-    this.name = 'OpenRouterTimeoutError';
+    this.name = "OpenRouterTimeoutError";
     Object.setPrototypeOf(this, OpenRouterTimeoutError.prototype);
   }
 }
@@ -71,16 +71,16 @@ export class OpenRouterTimeoutError extends OpenRouterError {
 export class OpenRouterServerError extends OpenRouterError {
   constructor(message: string, statusCode: number) {
     super(message, statusCode);
-    this.name = 'OpenRouterServerError';
+    this.name = "OpenRouterServerError";
     Object.setPrototypeOf(this, OpenRouterServerError.prototype);
   }
 }
 
 /** Valid HTTP response but invalid or empty content (e.g. missing choices[0].message.content). */
 export class OpenRouterParseError extends OpenRouterError {
-  constructor(message: string = 'OpenRouter response was invalid or empty.') {
+  constructor(message = "OpenRouter response was invalid or empty.") {
     super(message);
-    this.name = 'OpenRouterParseError';
+    this.name = "OpenRouterParseError";
     Object.setPrototypeOf(this, OpenRouterParseError.prototype);
   }
 }

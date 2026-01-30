@@ -20,13 +20,7 @@ interface ApiErrorBody {
   details?: { field: string; message: string }[];
 }
 
-export function ProductFormModal({
-  open,
-  mode,
-  initialProduct,
-  onClose,
-  onSuccess,
-}: ProductFormModalProps) {
+export function ProductFormModal({ open, mode, initialProduct, onClose, onSuccess }: ProductFormModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [submitError, setSubmitError] = useState<{ details?: { field: string; message: string }[] } | undefined>();
   const [submitting, setSubmitting] = useState(false);
@@ -184,11 +178,7 @@ export function ProductFormModal({
         submitError={submitError}
       />
       {submitting && (
-        <p
-          className="mt-2 text-sm text-muted-foreground"
-          aria-live="polite"
-          data-test-id="product-form-saving"
-        >
+        <p className="mt-2 text-sm text-muted-foreground" aria-live="polite" data-test-id="product-form-saving">
           Saving…
         </p>
       )}
