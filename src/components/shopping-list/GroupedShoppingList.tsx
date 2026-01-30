@@ -26,6 +26,7 @@ function buildGroupedFromItems(items: ShoppingListItemDto[]): Record<string, Sho
 
 export interface GroupedShoppingListProps {
   shoppingList: ShoppingListDto;
+  "data-test-id"?: string;
 }
 
 /**
@@ -41,7 +42,10 @@ function countGroupedItems(grouped: Record<string, ShoppingListItemDto[]>): numb
  * - grouped is missing/empty, or
  * - grouped has keys but no items while items array has data (malformed API).
  */
-export function GroupedShoppingList({ shoppingList }: GroupedShoppingListProps) {
+export function GroupedShoppingList({
+  shoppingList,
+  "data-test-id": dataTestId,
+}: GroupedShoppingListProps) {
   const rawGrouped = shoppingList.grouped ?? {};
   const items = shoppingList.items ?? [];
   const hasGroupedKeys = Object.keys(rawGrouped).length > 0;
@@ -59,6 +63,7 @@ export function GroupedShoppingList({ shoppingList }: GroupedShoppingListProps) 
     <section
       aria-labelledby="shopping-list-categories-heading"
       aria-label="Shopping list by category"
+      data-test-id={dataTestId}
     >
       <h2 id="shopping-list-categories-heading" className="sr-only">
         Shopping list by category
@@ -70,6 +75,7 @@ export function GroupedShoppingList({ shoppingList }: GroupedShoppingListProps) 
             id={`shopping-category-${index}`}
             categoryName={categoryName}
             items={grouped[categoryName] ?? []}
+            data-test-id="shopping-list-category"
           />
         ))}
       </div>

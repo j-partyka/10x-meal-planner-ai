@@ -57,16 +57,21 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
       }
       setIsSubmitting(true);
       setErrorMessage(null);
-      const { error } = await supabaseBrowser.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      setIsSubmitting(false);
-      if (error) {
-        setErrorMessage(mapSignInError(error));
-        return;
+      try {
+        const { error } = await supabaseBrowser.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        setIsSubmitting(false);
+        if (error) {
+          setErrorMessage(mapSignInError(error));
+          return;
+        }
+        window.location.href = getRedirectTarget(redirect);
+      } catch {
+        setIsSubmitting(false);
+        setErrorMessage("Something went wrong. Please try again.");
       }
-      window.location.href = getRedirectTarget(redirect);
     },
     [email, password, redirect]
   );
@@ -85,22 +90,27 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
       }
       setIsSubmitting(true);
       setErrorMessage(null);
-      const { error } = await supabaseBrowser.auth.signUp({
-        email: email.trim(),
-        password,
-      });
-      setIsSubmitting(false);
-      if (error) {
-        setErrorMessage(mapSignUpError(error));
-        return;
+      try {
+        const { error } = await supabaseBrowser.auth.signUp({
+          email: email.trim(),
+          password,
+        });
+        setIsSubmitting(false);
+        if (error) {
+          setErrorMessage(mapSignUpError(error));
+          return;
+        }
+        window.location.href = getRedirectTarget(redirect);
+      } catch {
+        setIsSubmitting(false);
+        setErrorMessage("Something went wrong. Please try again.");
       }
-      window.location.href = getRedirectTarget(redirect);
     },
     [email, password, confirmPassword, redirect]
   );
 
   return (
-    <div className="w-full max-w-sm space-y-6">
+    <div className="w-full max-w-sm space-y-6" data-test-id="auth-form-container">
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">
           {mode === "signin" ? "Sign in" : "Create account"}
@@ -112,7 +122,11 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
         </p>
       </div>
 
-      <ModeSwitcher value={mode} onValueChange={handleModeChange} />
+      <ModeSwitcher
+        value={mode}
+        onValueChange={handleModeChange}
+        data-test-id="auth-mode-switcher"
+      />
 
       {mode === "signin" ? (
         <SignInForm

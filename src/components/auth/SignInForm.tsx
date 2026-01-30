@@ -40,6 +40,7 @@ export function SignInForm({
       className="flex w-full max-w-sm flex-col gap-4"
       noValidate
       aria-describedby={errorMessage ? errorId : undefined}
+      data-test-id="signin-form"
     >
       <div className="grid gap-2">
         <Label htmlFor="signin-email">Email</Label>
@@ -53,6 +54,7 @@ export function SignInForm({
           ref={emailInputRef}
           disabled={disabled}
           required
+          data-test-id="signin-email"
         />
       </div>
       <div className="grid gap-2">
@@ -66,9 +68,10 @@ export function SignInForm({
           onChange={(e) => onPasswordChange(e.target.value)}
           disabled={disabled}
           required
+          data-test-id="signin-password"
         />
       </div>
-      <Button type="submit" disabled={disabled}>
+      <Button type="submit" disabled={disabled} data-test-id="signin-submit">
         Sign in
       </Button>
     </form>

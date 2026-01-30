@@ -50,7 +50,12 @@ export function ProductTable({
   return (
     <>
       {/* Table: visible from md up */}
-      <div className="hidden md:block" role="region" aria-label={ariaLabel}>
+      <div
+        className="hidden md:block"
+        role="region"
+        aria-label={ariaLabel}
+        data-test-id="inventory-product-table"
+      >
         <Table>
           <TableHeader>
             <TableRow>
@@ -64,13 +69,16 @@ export function ProductTable({
           </TableHeader>
           <TableBody>
             {products.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow key={product.id} data-test-id="product-row" data-product-id={product.id}>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell className="text-right">{product.quantity}</TableCell>
                 <TableCell>{product.unit}</TableCell>
                 <TableCell>
                   <span className="flex items-center gap-2">
-                    <ExpirationIndicator expirationDate={product.expiration_date} />
+                    <ExpirationIndicator
+                      expirationDate={product.expiration_date}
+                      data-test-id="product-expiration-indicator"
+                    />
                     <span className="text-muted-foreground">
                       {formatExpirationDate(product.expiration_date)}
                     </span>
@@ -87,6 +95,7 @@ export function ProductTable({
                       size="sm"
                       onClick={handleEdit(product)}
                       aria-label={`Edit ${product.name}`}
+                      data-test-id="product-edit"
                     >
                       Edit
                     </Button>
@@ -96,6 +105,7 @@ export function ProductTable({
                       size="sm"
                       onClick={handleDelete(product)}
                       aria-label={`Delete ${product.name}`}
+                      data-test-id="product-delete"
                     >
                       Delete
                     </Button>
@@ -112,6 +122,7 @@ export function ProductTable({
         className="flex flex-col gap-3 md:hidden"
         aria-label={ariaLabel}
         role="list"
+        data-test-id="inventory-product-table"
       >
         {products.map((product) => (
           <li
@@ -120,6 +131,8 @@ export function ProductTable({
               "rounded-lg border border-border bg-card p-4 shadow-sm",
               "flex flex-col gap-2"
             )}
+            data-test-id="product-row"
+            data-product-id={product.id}
           >
             <div className="flex items-start justify-between gap-2">
               <span className="font-medium text-foreground">{product.name}</span>
@@ -144,6 +157,7 @@ export function ProductTable({
                 onClick={handleEdit(product)}
                 aria-label={`Edit ${product.name}`}
                 className="flex-1"
+                data-test-id="product-edit"
               >
                 Edit
               </Button>
@@ -154,6 +168,7 @@ export function ProductTable({
                 onClick={handleDelete(product)}
                 aria-label={`Delete ${product.name}`}
                 className="flex-1"
+                data-test-id="product-delete"
               >
                 Delete
               </Button>

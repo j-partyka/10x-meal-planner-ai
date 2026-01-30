@@ -8,7 +8,7 @@ const redirect = redirectParam && isAllowedRedirect(redirectParam) ? redirectPar
 ---
 
 <Layout title="Sign in – 10x Meal Planner">
-  <main class="flex min-h-full flex-col items-center justify-center px-4 py-12" role="main">
+  <main class="flex min-h-full flex-col items-center justify-center px-4 py-12" role="main" data-test-id="login-page">
     <AuthFormContainer client:load redirect={redirect} />
   </main>
 </Layout>

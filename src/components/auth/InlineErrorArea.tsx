@@ -15,6 +15,7 @@ export function InlineErrorArea({ message, id }: InlineErrorAreaProps): ReactNod
       role="alert"
       aria-live="polite"
       className="mt-2 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+      data-test-id="auth-error"
     >
       {message}
     </div>

@@ -157,6 +157,7 @@ export function ProductFormModal({
       )}
       aria-modal="true"
       aria-labelledby="product-form-modal-title"
+      data-test-id="product-form-modal"
     >
       <h2 id="product-form-modal-title" className="sr-only">
         {title}
@@ -170,6 +171,7 @@ export function ProductFormModal({
           className="shrink-0"
           onClick={handleCancel}
           aria-label="Close"
+          data-test-id="product-form-modal-close"
         >
           ×
         </Button>
@@ -182,7 +184,11 @@ export function ProductFormModal({
         submitError={submitError}
       />
       {submitting && (
-        <p className="mt-2 text-sm text-muted-foreground" aria-live="polite">
+        <p
+          className="mt-2 text-sm text-muted-foreground"
+          aria-live="polite"
+          data-test-id="product-form-saving"
+        >
           Saving…
         </p>
       )}

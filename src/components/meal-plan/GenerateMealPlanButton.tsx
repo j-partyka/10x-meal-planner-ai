@@ -9,6 +9,7 @@ export interface GenerateMealPlanButtonProps {
   disabled: boolean;
   onClick: () => void;
   loading?: boolean;
+  "data-test-id"?: string;
 }
 
 const TOOLTIP_MESSAGE = "Add products to inventory first";
@@ -17,6 +18,7 @@ export function GenerateMealPlanButton({
   disabled,
   onClick,
   loading = false,
+  "data-test-id": dataTestId,
 }: GenerateMealPlanButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -27,6 +29,7 @@ export function GenerateMealPlanButton({
       disabled={isDisabled}
       aria-disabled={isDisabled}
       aria-busy={loading}
+      data-test-id={dataTestId}
     >
       {loading ? "Generating…" : "Generate Meal Plan"}
     </Button>

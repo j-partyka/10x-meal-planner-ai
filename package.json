@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "dev:e2e": "node scripts/dev-e2e.js"
   },
   "dependencies": {
     "@astrojs/node": "^9.4.3",
@@ -46,10 +47,11 @@
   "devDependencies": {
     "@eslint/compat": "1.2.7",
     "@eslint/js": "9.23.0",
-    "@playwright/test": "^1.58.0",
+    "@playwright/test": "^1.58.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/node": "^25.1.0",
     "@typescript-eslint/eslint-plugin": "8.28.0",
     "@typescript-eslint/parser": "8.28.0",
     "@vitejs/plugin-react": "^5.1.2",

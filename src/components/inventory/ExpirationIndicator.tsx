@@ -53,11 +53,13 @@ const statusConfig: Record<
 export interface ExpirationIndicatorProps {
   expirationDate: string;
   className?: string;
+  "data-test-id"?: string;
 }
 
 export function ExpirationIndicator({
   expirationDate,
   className,
+  "data-test-id": dataTestId,
 }: ExpirationIndicatorProps) {
   const status = useMemo(
     () => getExpirationStatus(expirationDate),
@@ -71,6 +73,7 @@ export function ExpirationIndicator({
       className={cn("inline-flex items-center gap-1.5", config.className, className)}
       title={config.label || undefined}
       aria-label={config.label ? `Expiration: ${config.label}` : "Expiration: OK"}
+      data-test-id={dataTestId}
     >
       <span aria-hidden>{config.symbol}</span>
       {config.label ? (

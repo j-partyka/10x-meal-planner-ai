@@ -66,7 +66,8 @@ The application is designed for families with young children who want to prepare
   - Run with: `npm run test`
 - **Playwright** - End-to-end tests
   - Browser-based tests for critical user journeys: authentication, inventory CRUD, meal plan generation, shopping list
-  - Run against `npm run dev` or a deployed preview
+  - Uses Page Object Model and `data-test-id` locators (see `e2e/README.md` and `.ai/e2e-component-structure.md`)
+  - Credentials and Supabase params are read from **`.env.test`** (see [E2E: .env.test and running tests](#e2e-envtest-and-running-tests))
   - Run with: `npm run test:e2e`
 - Detailed test scope, scenarios, and acceptance criteria are in `.ai/test-plan.md`
 
@@ -173,13 +174,28 @@ The application is designed for families with young children who want to prepare
 The project uses **Vitest** for unit and integration tests and **Playwright** for end-to-end tests (see [Tech Stack > Testing](#testing) for details).
 
 - **Unit / integration:** `npm run test` — exercises schemas, services, and API routes (with mocked Supabase and OpenRouter where needed).
-- **E2E:** `npm run test:e2e` — runs Playwright against the app (dev server is started automatically by Playwright’s config).
+- **E2E:** `npm run test:e2e` — runs Playwright against the app (dev server is started automatically by Playwright’s config). See [E2E: .env.test and running tests](#e2e-envtest-and-running-tests).
 - **Test plan:** Scope, scenarios, and acceptance criteria are documented in [.ai/test-plan.md](.ai/test-plan.md). API checklists are in [.ai/api-test-scenarios.md](.ai/api-test-scenarios.md).
 
 **Test environment**
 
 - **Vitest:** `vitest.config.ts` (jsdom, `src/test/setup.ts` for `@testing-library/jest-dom`). Unit tests live in `src/**/*.test.ts` or `*.spec.ts`. Use `npm run test:watch` for watch mode and `npm run test:ui` for the Vitest UI.
 - **Playwright:** `playwright.config.ts` (Chromium only). E2E specs and Page Objects live in `e2e/` (e.g. `e2e/smoke.spec.ts`, `e2e/pages/LoginPage.ts`). First time: run `npx playwright install chromium` to install the browser.
+
+### E2E: .env.test and running tests
+
+Playwright loads **`.env.test`** so tests can use Supabase-related vars and the E2E test user. The app under test is started with **`npm run dev:e2e`**, which runs the dev server with env from **`.env.test`** (one env file for E2E; see `scripts/dev-e2e.js`).
+
+- **`E2E_USERNAME`** — email of the test user (must exist in your Supabase Auth).
+- **`E2E_PASSWORD`** — password for that user.
+- **`SUPABASE_URL`**, **`SUPABASE_KEY`** — Supabase project URL and anon key. The dev server script sets `PUBLIC_SUPABASE_URL` and `PUBLIC_SUPABASE_ANON_KEY` from these so the browser client uses the same project.
+
+Create the test user in Supabase Dashboard → Authentication → Users if needed.
+
+1. Copy or create `.env.test` in the project root with `E2E_USERNAME`, `E2E_PASSWORD`, `SUPABASE_URL`, and `SUPABASE_KEY`.
+2. Run: `npm run test:e2e`.
+
+Tests that need login will **skip** if `E2E_USERNAME` or `E2E_PASSWORD` is not set. Full E2E details: [e2e/README.md](e2e/README.md).
 
 ## Project Scope
 

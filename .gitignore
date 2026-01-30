@@ -32,3 +32,9 @@ test-results/
 playwright-report/
 playwright/.cache/
 .blob-report/
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

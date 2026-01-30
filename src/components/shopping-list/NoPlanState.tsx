@@ -8,6 +8,7 @@ export function NoPlanState() {
       className="flex flex-col gap-3 rounded-lg border border-dashed border-muted-foreground/25 bg-muted/30 px-6 py-8 text-center"
       role="status"
       aria-label="No meal plan"
+      data-test-id="shopping-list-no-plan"
     >
       <p className="text-muted-foreground text-sm">
         You don&apos;t have a meal plan yet. Create one from the Meal plan page, or add products to your inventory first.
@@ -16,12 +17,14 @@ export function NoPlanState() {
         <a
           href="/meal-plan"
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          data-test-id="shopping-list-no-plan-go-to-meal-plan"
         >
           Go to Meal plan
         </a>
         <a
           href="/"
           className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          data-test-id="shopping-list-no-plan-go-to-inventory"
         >
           Go to Inventory
         </a>

@@ -6,7 +6,7 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title = "Inventory", titleId }: PageHeaderProps) {
   return (
-    <header>
+    <header data-test-id={title === "Inventory" ? "inventory-header" : title === "Meal Plan" ? "meal-plan-header" : title === "Shopping List" ? "shopping-list-header" : undefined}>
       <h1
         id={titleId}
         className="text-2xl font-semibold text-foreground"

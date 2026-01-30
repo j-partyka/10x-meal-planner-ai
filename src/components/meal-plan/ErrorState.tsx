@@ -13,12 +13,14 @@ export interface ErrorStateProps {
   error: MealPlanErrorState | null;
   onRetry: () => void;
   retryDisabled?: boolean;
+  "data-test-id"?: string;
 }
 
 export function ErrorState({
   error,
   onRetry,
   retryDisabled = false,
+  "data-test-id": dataTestId,
 }: ErrorStateProps) {
   if (!error) return null;
 
@@ -27,6 +29,7 @@ export function ErrorState({
       className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-destructive-foreground"
       role="alert"
       aria-live="assertive"
+      data-test-id={dataTestId}
     >
       <p className="text-sm">{error.message}</p>
       {error.hint != null && error.hint !== "" && (
@@ -39,6 +42,7 @@ export function ErrorState({
         onClick={onRetry}
         disabled={retryDisabled}
         className="mt-2"
+        data-test-id="meal-plan-retry"
       >
         Retry
       </Button>

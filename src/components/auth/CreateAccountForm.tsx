@@ -46,6 +46,7 @@ export function CreateAccountForm({
       className="flex w-full max-w-sm flex-col gap-4"
       noValidate
       aria-describedby={errorMessage ? errorId : undefined}
+      data-test-id="register-form"
     >
       <div className="grid gap-2">
         <Label htmlFor="register-email">Email</Label>
@@ -59,6 +60,7 @@ export function CreateAccountForm({
           ref={emailInputRef}
           disabled={disabled}
           required
+          data-test-id="register-email"
         />
       </div>
       <div className="grid gap-2">
@@ -73,6 +75,7 @@ export function CreateAccountForm({
           disabled={disabled}
           required
           minLength={MIN_PASSWORD_LENGTH}
+          data-test-id="register-password"
         />
         <p className="text-xs text-muted-foreground">
           At least {MIN_PASSWORD_LENGTH} characters
@@ -90,9 +93,10 @@ export function CreateAccountForm({
           disabled={disabled}
           required
           minLength={MIN_PASSWORD_LENGTH}
+          data-test-id="register-confirm-password"
         />
       </div>
-      <Button type="submit" disabled={disabled}>
+      <Button type="submit" disabled={disabled} data-test-id="register-submit">
         Create account
       </Button>
     </form>

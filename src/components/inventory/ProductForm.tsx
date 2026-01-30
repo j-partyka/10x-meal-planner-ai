@@ -182,6 +182,7 @@ export function ProductForm({
           maxLength={NAME_MAX + 1}
           aria-invalid={Boolean(errors.name)}
           aria-describedby={errors.name ? `${nameId}-error` : undefined}
+          data-test-id="product-form-name"
         />
         {errors.name && (
           <p id={`${nameId}-error`} className="text-sm text-destructive" role="alert">
@@ -202,6 +203,7 @@ export function ProductForm({
           onBlur={handleBlurStable("quantity")}
           aria-invalid={Boolean(errors.quantity)}
           aria-describedby={errors.quantity ? `${quantityId}-error` : undefined}
+          data-test-id="product-form-quantity"
         />
         {errors.quantity && (
           <p id={`${quantityId}-error`} className="text-sm text-destructive" role="alert">
@@ -217,6 +219,7 @@ export function ProductForm({
           value={values.unit}
           onChange={handleChange("unit")}
           onBlur={handleBlurStable("unit")}
+          data-test-id="product-form-unit"
           className={cn(
             "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors",
             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
@@ -249,6 +252,7 @@ export function ProductForm({
           onBlur={handleBlurStable("expiration_date")}
           aria-invalid={Boolean(errors.expiration_date)}
           aria-describedby={errors.expiration_date ? `${expirationId}-error` : undefined}
+          data-test-id="product-form-expiration-date"
         />
         {errors.expiration_date && (
           <p id={`${expirationId}-error`} className="text-sm text-destructive" role="alert">
@@ -268,6 +272,7 @@ export function ProductForm({
           maxLength={CATEGORY_MAX + 1}
           aria-invalid={Boolean(errors.category)}
           aria-describedby={errors.category ? `${categoryId}-error` : undefined}
+          data-test-id="product-form-category"
         />
         {errors.category && (
           <p id={`${categoryId}-error`} className="text-sm text-destructive" role="alert">
@@ -277,10 +282,12 @@ export function ProductForm({
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} data-test-id="product-form-cancel">
           Cancel
         </Button>
-        <Button type="submit">{mode === "add" ? "Add product" : "Save changes"}</Button>
+        <Button type="submit" data-test-id="product-form-submit">
+          {mode === "add" ? "Add product" : "Save changes"}
+        </Button>
       </div>
     </form>
   );

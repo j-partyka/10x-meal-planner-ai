@@ -2,15 +2,22 @@ import type { MealDto } from "@/types";
 
 export interface MealCellContentProps {
   meal: MealDto;
+  "data-test-id"?: string;
 }
 
 /**
  * Renders one meal: dish name, ingredients (name - quantity unit), instructions as bullets.
  * Text wraps; long lists scroll inside the cell without full-page horizontal scroll.
  */
-export function MealCellContent({ meal }: MealCellContentProps) {
+export function MealCellContent({
+  meal,
+  "data-test-id": dataTestId,
+}: MealCellContentProps) {
   return (
-    <div className="min-w-0 max-h-[280px] space-y-2 overflow-y-auto text-left">
+    <div
+      className="min-w-0 max-h-[280px] space-y-2 overflow-y-auto text-left"
+      data-test-id={dataTestId}
+    >
       <p className="font-medium text-foreground text-sm leading-tight">
         {meal.name}
       </p>

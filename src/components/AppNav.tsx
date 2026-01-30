@@ -31,6 +31,7 @@ export function AppNav() {
     <nav
       className="flex items-center gap-4 border-b border-border bg-background px-4 py-3"
       aria-label="Main navigation"
+      data-test-id="nav"
     >
       <div className="flex flex-1 items-center gap-4">
         {navLinks.map(({ href, label }) => (
@@ -39,12 +40,25 @@ export function AppNav() {
             href={href}
             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
             onClick={(e) => handleNavClick(e, href)}
+            data-test-id={
+              href === "/"
+                ? "nav-link-inventory"
+                : href === "/meal-plan"
+                  ? "nav-link-meal-plan"
+                  : "nav-link-shopping-list"
+            }
           >
             {label}
           </a>
         ))}
       </div>
-      <Button variant="outline" size="sm" onClick={handleLogout} type="button">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleLogout}
+        type="button"
+        data-test-id="nav-logout"
+      >
         Logout
       </Button>
     </nav>

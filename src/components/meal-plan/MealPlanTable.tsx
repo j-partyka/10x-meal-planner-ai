@@ -12,6 +12,7 @@ import { MealCellContent } from "./MealCellContent";
 export interface MealPlanTableProps {
   mealPlan: MealPlanDto;
   maxHeight?: string;
+  "data-test-id"?: string;
 }
 
 const MEAL_KEYS = ["breakfast", "lunch", "dinner"] as const;
@@ -31,7 +32,11 @@ function formatDayHeader(dateStr: string): string {
   }).format(date);
 }
 
-export function MealPlanTable({ mealPlan, maxHeight }: MealPlanTableProps) {
+export function MealPlanTable({
+  mealPlan,
+  maxHeight,
+  "data-test-id": dataTestId,
+}: MealPlanTableProps) {
   const days = mealPlan.days;
   if (!days.length) return null;
 
@@ -39,6 +44,7 @@ export function MealPlanTable({ mealPlan, maxHeight }: MealPlanTableProps) {
     <div
       className="w-full overflow-auto"
       style={maxHeight ? { maxHeight } : undefined}
+      data-test-id={dataTestId}
     >
       <Table>
         <TableHeader>
@@ -74,7 +80,10 @@ export function MealPlanTable({ mealPlan, maxHeight }: MealPlanTableProps) {
                   key={day.date}
                   className="min-w-[180px] min-h-[44px] px-3 py-3 align-top text-sm"
                 >
-                  <MealCellContent meal={day[mealKey]} />
+                  <MealCellContent
+                    meal={day[mealKey]}
+                    data-test-id="meal-cell-content"
+                  />
                 </TableCell>
               ))}
             </TableRow>

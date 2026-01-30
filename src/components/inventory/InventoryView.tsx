@@ -103,6 +103,7 @@ export function InventoryView() {
       className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8"
       role="main"
       aria-label="Inventory"
+      data-test-id="inventory-page"
     >
       <PageHeader title="Inventory" />
 
@@ -113,6 +114,7 @@ export function InventoryView() {
           placeholder="Search products…"
           debounceMs={300}
           loading={loading}
+          data-test-id="inventory-search"
         />
         <Button
           ref={addButtonRef}
@@ -121,13 +123,14 @@ export function InventoryView() {
             setEditingProduct(null);
             setModalOpen(true);
           }}
+          data-test-id="inventory-add-product"
         >
           Add product
         </Button>
       </div>
 
       {loading && (
-        <p className="text-muted-foreground" aria-live="polite">
+        <p className="text-muted-foreground" aria-live="polite" data-test-id="inventory-loading">
           Loading…
         </p>
       )}

@@ -128,11 +128,16 @@ export function MealPlanView() {
     Date.now() < retryCooldownUntil;
 
   return (
-    <main className="flex flex-col gap-6 px-4 py-6" aria-label="Meal plan">
+    <main
+      className="flex flex-col gap-6 px-4 py-6"
+      aria-label="Meal plan"
+      data-test-id="meal-plan-page"
+    >
       <PageHeader title="Meal Plan" />
       <section
         className="flex flex-col gap-2"
         aria-label="Input sent to the AI"
+        data-test-id="meal-plan-prompt-section"
       >
         <label
           htmlFor="meal-plan-prompt"
@@ -147,6 +152,7 @@ export function MealPlanView() {
           rows={12}
           className="w-full resize-y rounded-md border border-input bg-muted/50 px-3 py-2 font-mono text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
           aria-describedby="meal-plan-prompt-description"
+          data-test-id="meal-plan-prompt"
         />
         <p
           id="meal-plan-prompt-description"
@@ -161,9 +167,14 @@ export function MealPlanView() {
           disabled={!hasProducts}
           onClick={generate}
           loading={loading}
+          data-test-id="meal-plan-generate"
         />
         {mealPlan != null && (
-          <RegenerateAllButton onClick={generate} loading={loading} />
+          <RegenerateAllButton
+            onClick={generate}
+            loading={loading}
+            data-test-id="meal-plan-regenerate"
+          />
         )}
         {mealPlan != null && (
           <a
@@ -174,26 +185,30 @@ export function MealPlanView() {
               e.preventDefault();
               window.location.href = "/shopping-list";
             }}
+            data-test-id="meal-plan-link-shopping-list"
           >
             Shopping list
           </a>
         )}
       </div>
-      {loading && <LoadingState />}
+      {loading && <LoadingState data-test-id="meal-plan-loading" />}
       {error && (
         <ErrorState
           error={error}
           onRetry={generate}
           retryDisabled={isRetryDisabled || loading}
+          data-test-id="meal-plan-error"
         />
       )}
       {!loading && !mealPlan && !hasProducts && !error && (
-        <MealPlanEmptyState />
+        <MealPlanEmptyState data-test-id="meal-plan-empty" />
       )}
       {!loading && !mealPlan && hasProducts && !error && (
-        <MealPlanEmptyStateWithInventory />
+        <MealPlanEmptyStateWithInventory data-test-id="meal-plan-empty-with-inventory" />
       )}
-      {!loading && mealPlan && <MealPlanTable mealPlan={mealPlan} />}
+      {!loading && mealPlan && (
+        <MealPlanTable mealPlan={mealPlan} data-test-id="meal-plan-table" />
+      )}
     </main>
   );
 }

@@ -10,6 +10,7 @@ export interface SearchInputProps {
   debounceMs?: number;
   loading?: boolean;
   onClear?: () => void;
+  "data-test-id"?: string;
 }
 
 const DEFAULT_DEBOUNCE_MS = 300;
@@ -21,6 +22,7 @@ export function SearchInput({
   debounceMs = DEFAULT_DEBOUNCE_MS,
   loading = false,
   onClear,
+  "data-test-id": dataTestId,
 }: SearchInputProps) {
   const [localValue, setLocalValue] = useState(value);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,7 +55,7 @@ export function SearchInput({
   const showClear = localValue.length > 0;
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="relative flex items-center gap-2" data-test-id={dataTestId}>
       <Input
         type="search"
         value={localValue}
@@ -61,6 +63,7 @@ export function SearchInput({
         placeholder={placeholder}
         aria-label="Search products by name or category"
         className={cn("pr-9", loading && "opacity-70")}
+        data-test-id={dataTestId ? "inventory-search-input" : undefined}
       />
       {showClear && (
         <Button
@@ -70,6 +73,7 @@ export function SearchInput({
           className="absolute right-1 h-7 w-7 shrink-0 rounded-md"
           onClick={handleClear}
           aria-label="Clear search"
+          data-test-id="inventory-search-clear"
         >
           <span aria-hidden>×</span>
         </Button>

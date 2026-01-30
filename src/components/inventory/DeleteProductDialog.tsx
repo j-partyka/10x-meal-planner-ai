@@ -73,6 +73,7 @@ export function DeleteProductDialog({
       aria-modal="true"
       aria-labelledby="delete-product-dialog-title"
       aria-describedby="delete-product-dialog-description"
+      data-test-id="delete-product-dialog"
     >
       <h2 id="delete-product-dialog-title" className="text-lg font-semibold text-foreground">
         Delete product?
@@ -81,7 +82,13 @@ export function DeleteProductDialog({
         Are you sure you want to delete {productName}? This cannot be undone.
       </p>
       <div className="mt-6 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={handleClose} disabled={deleting}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleClose}
+          disabled={deleting}
+          data-test-id="delete-product-dialog-cancel"
+        >
           Cancel
         </Button>
         <Button
@@ -90,6 +97,7 @@ export function DeleteProductDialog({
           onClick={handleConfirm}
           disabled={deleting}
           aria-busy={deleting}
+          data-test-id="delete-product-dialog-confirm"
         >
           {deleting ? "Deleting…" : "Delete"}
         </Button>

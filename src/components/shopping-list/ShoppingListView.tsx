@@ -69,6 +69,7 @@ export function ShoppingListView() {
       <main
         className="flex flex-col gap-6 px-4 py-6"
         aria-labelledby={mainLabelId}
+        data-test-id="shopping-list-page"
       >
         <PageHeader title="Shopping List" titleId={mainLabelId} />
         <NoPlanState />
@@ -81,6 +82,7 @@ export function ShoppingListView() {
       <main
         className="flex flex-col gap-6 px-4 py-6"
         aria-labelledby={mainLabelId}
+        data-test-id="shopping-list-page"
       >
         <PageHeader title="Shopping List" titleId={mainLabelId} />
         <div
@@ -88,6 +90,7 @@ export function ShoppingListView() {
           role="status"
           aria-live="polite"
           aria-atomic="true"
+          data-test-id="shopping-list-loading"
         >
           Loading shopping list…
         </div>
@@ -100,6 +103,7 @@ export function ShoppingListView() {
       <main
         className="flex flex-col gap-6 px-4 py-6"
         aria-labelledby={mainLabelId}
+        data-test-id="shopping-list-page"
       >
         <PageHeader title="Shopping List" titleId={mainLabelId} />
         <div
@@ -107,6 +111,7 @@ export function ShoppingListView() {
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
+          data-test-id="shopping-list-error"
         >
           {error}
         </div>
@@ -125,6 +130,7 @@ export function ShoppingListView() {
     <main
       className="flex flex-col gap-6 px-4 py-6"
       aria-labelledby={mainLabelId}
+      data-test-id="shopping-list-page"
     >
       <PageHeader title="Shopping List" titleId={mainLabelId} />
       <div className="flex flex-wrap items-center gap-3">
@@ -136,6 +142,7 @@ export function ShoppingListView() {
             disabled={loading}
             onClick={handleRefresh}
             aria-busy={loading}
+            data-test-id="shopping-list-refresh"
           >
             {loading ? "Updating…" : "Refresh list"}
           </Button>
@@ -147,6 +154,7 @@ export function ShoppingListView() {
           role="alert"
           aria-live="assertive"
           aria-atomic="true"
+          data-test-id="shopping-list-error"
         >
           {error}
         </div>
@@ -161,9 +169,14 @@ export function ShoppingListView() {
           Updating list…
         </p>
       )}
-      {!loading && shoppingList != null && isEmpty && <EmptyListState />}
+      {!loading && shoppingList != null && isEmpty && (
+        <EmptyListState data-test-id="shopping-list-empty" />
+      )}
       {!loading && shoppingList != null && !isEmpty && (
-        <GroupedShoppingList shoppingList={shoppingList} />
+        <GroupedShoppingList
+          shoppingList={shoppingList}
+          data-test-id="shopping-list-grouped"
+        />
       )}
     </main>
   );

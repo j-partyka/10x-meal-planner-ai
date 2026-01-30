@@ -5,9 +5,9 @@ test.describe("Smoke — auth and app load", () => {
   test("login page loads and shows sign-in form", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await expect(loginPage.emailInput).toBeVisible();
-    await expect(loginPage.passwordInput).toBeVisible();
-    await expect(loginPage.submitButton).toBeVisible();
+    await expect(loginPage.signInEmailInput).toBeVisible();
+    await expect(loginPage.signInPasswordInput).toBeVisible();
+    await expect(loginPage.signInSubmitButton).toBeVisible();
   });
 
   test("unauthenticated access to home redirects to login", async ({
