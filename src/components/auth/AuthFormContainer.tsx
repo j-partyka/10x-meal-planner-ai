@@ -11,6 +11,8 @@ import { SignInForm } from "./SignInForm";
 
 interface AuthFormContainerProps {
   redirect?: string;
+  /** Shown after password reset when user lands on `/login?reset=success`. */
+  showPasswordResetSuccess?: boolean;
 }
 
 /** After successful sign in/sign up: navigate to validated redirect or /. */
@@ -18,7 +20,7 @@ function getRedirectTarget(redirect: string | undefined): string {
   return redirect && isAllowedRedirect(redirect) ? redirect : "/";
 }
 
-export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
+export function AuthFormContainer({ redirect, showPasswordResetSuccess = false }: AuthFormContainerProps) {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -98,6 +100,16 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
 
   return (
     <div className="w-full max-w-sm space-y-6" data-test-id="auth-form-container">
+      {showPasswordResetSuccess ? (
+        <div
+          className="rounded-md border border-border bg-muted/40 px-3 py-2 text-center text-sm text-foreground"
+          role="status"
+          data-test-id="auth-reset-success-banner"
+        >
+          Your password was reset. Sign in with your new password.
+        </div>
+      ) : null}
+
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">{mode === "signin" ? "Sign in" : "Create account"}</h1>
         <p className="text-sm text-muted-foreground">
@@ -110,17 +122,28 @@ export function AuthFormContainer({ redirect }: AuthFormContainerProps) {
       <ModeSwitcher value={mode} onValueChange={handleModeChange} data-test-id="auth-mode-switcher" />
 
       {mode === "signin" ? (
-        <SignInForm
-          email={email}
-          password={password}
-          onEmailChange={setEmail}
-          onPasswordChange={setPassword}
-          onSubmit={handleSignIn}
-          errorMessage={errorMessage}
-          errorId={errorId}
-          emailInputRef={emailInputRef}
-          disabled={isSubmitting}
-        />
+        <>
+          <SignInForm
+            email={email}
+            password={password}
+            onEmailChange={setEmail}
+            onPasswordChange={setPassword}
+            onSubmit={handleSignIn}
+            errorMessage={errorMessage}
+            errorId={errorId}
+            emailInputRef={emailInputRef}
+            disabled={isSubmitting}
+          />
+          <p className="text-center text-sm">
+            <a
+              href="/forgot-password"
+              className="text-primary underline-offset-4 hover:underline"
+              data-test-id="auth-link-forgot-password"
+            >
+              Forgot password?
+            </a>
+          </p>
+        </>
       ) : (
         <CreateAccountForm
           email={email}

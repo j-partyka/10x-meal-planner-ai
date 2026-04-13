@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { isValidEmail, isValidPassword, getSignInValidationError, getRegisterValidationError } from "./auth-validation";
+import {
+  isValidEmail,
+  isValidPassword,
+  getSignInValidationError,
+  getRegisterValidationError,
+  getForgotPasswordEmailValidationError,
+  getResetPasswordValidationError,
+} from "./auth-validation";
 
 describe("auth-validation", () => {
   describe("isValidEmail", () => {
@@ -128,6 +135,29 @@ describe("auth-validation", () => {
       expect(getRegisterValidationError("a@b.co", "", "")).toBe("Password is required.");
       expect(getRegisterValidationError("a@b.co", "short", "short")).toBe("Password should be at least 8 characters.");
       expect(getRegisterValidationError("a@b.co", "password1", "other")).toBe("Passwords do not match.");
+    });
+  });
+
+  describe("getForgotPasswordEmailValidationError", () => {
+    it("returns null for a valid email", () => {
+      expect(getForgotPasswordEmailValidationError("user@example.com")).toBeNull();
+    });
+
+    it("returns email required / format messages consistent with sign-in", () => {
+      expect(getForgotPasswordEmailValidationError("")).toBe("Email is required.");
+      expect(getForgotPasswordEmailValidationError("not-an-email")).toBe("Please enter a valid email address.");
+    });
+  });
+
+  describe("getResetPasswordValidationError", () => {
+    it("returns null when passwords match and meet length", () => {
+      expect(getResetPasswordValidationError("password1", "password1")).toBeNull();
+    });
+
+    it("returns password errors in order", () => {
+      expect(getResetPasswordValidationError("", "")).toBe("Password is required.");
+      expect(getResetPasswordValidationError("short", "short")).toBe("Password should be at least 8 characters.");
+      expect(getResetPasswordValidationError("password1", "password2")).toBe("Passwords do not match.");
     });
   });
 });

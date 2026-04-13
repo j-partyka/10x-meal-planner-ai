@@ -30,3 +30,20 @@ export function getRegisterValidationError(email: string, password: string, conf
   if (password !== confirmPassword) return "Passwords do not match.";
   return null;
 }
+
+/** Email field only (forgot password request). */
+export function getForgotPasswordEmailValidationError(email: string): string | null {
+  if (!email.trim()) return "Email is required.";
+  if (!isValidEmail(email)) return "Please enter a valid email address.";
+  return null;
+}
+
+/** New password + confirm (password reset form). */
+export function getResetPasswordValidationError(password: string, confirmPassword: string): string | null {
+  if (!password) return "Password is required.";
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return `Password should be at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
+  if (password !== confirmPassword) return "Passwords do not match.";
+  return null;
+}

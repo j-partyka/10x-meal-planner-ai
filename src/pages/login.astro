@@ -1,14 +1,17 @@
 ---
-import Layout from "../layouts/Layout.astro";
+export const prerender = false;
+
+import AuthLayout from "../layouts/AuthLayout.astro";
 import { AuthFormContainer } from "../components/auth/AuthFormContainer";
 import { isAllowedRedirect } from "../types";
 
 const redirectParam = Astro.url.searchParams.get("redirect");
 const redirect = redirectParam && isAllowedRedirect(redirectParam) ? redirectParam : undefined;
+const showPasswordResetSuccess = Astro.url.searchParams.get("reset") === "success";
 ---
 
-<Layout title="Sign in – 10x Meal Planner">
-  <main class="flex min-h-full flex-col items-center justify-center px-4 py-12" role="main" data-test-id="login-page">
-    <AuthFormContainer client:load redirect={redirect} />
+<AuthLayout title="Sign in – 10x Meal Planner">
+  <main class="flex min-h-full flex-1 flex-col items-center justify-center px-4 py-12" role="main" data-test-id="login-page">
+    <AuthFormContainer client:load redirect={redirect} showPasswordResetSuccess={showPasswordResetSuccess} />
   </main>
-</Layout>
+</AuthLayout>
